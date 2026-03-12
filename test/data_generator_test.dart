@@ -41,7 +41,7 @@ class CounterDao {
             .readAsString(),
         completion(
           equals('''
-import '../../domain/counter_repository.dart';
+import '../../domain/repositories/counter_repository.dart';
 
 class CounterRepositoryImpl implements CounterRepository {
   const CounterRepositoryImpl();

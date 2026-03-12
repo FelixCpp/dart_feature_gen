@@ -17,7 +17,7 @@ void main() {
       );
     });
 
-    test('should generate domain directory', () async {
+    test('should generate presentation directory', () async {
       await generator.generate();
 
       expect(
@@ -70,7 +70,7 @@ class _Scaffold extends StatelessWidget {
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed/freezed.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'counter_bloc.freezed.dart';
 part 'counter_event.dart';

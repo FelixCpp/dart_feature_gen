@@ -48,7 +48,7 @@ class _Scaffold extends StatelessWidget {
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed/freezed.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part '${featureName}_bloc.freezed.dart';
 part '${featureName}_event.dart';

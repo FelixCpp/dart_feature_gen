@@ -9,7 +9,7 @@ class DataTemplates {
     final className = _toPascalCase(featureName);
 
     return '''
-import '../../domain/${featureName}_repository.dart';
+import '../../domain/repositories/${featureName}_repository.dart';
 
 class ${className}RepositoryImpl implements ${className}Repository {
   const ${className}RepositoryImpl();

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file/file.dart';
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
@@ -8,10 +9,12 @@ class ProcessRunner {
   const ProcessRunner({
     required this.logger,
     required this.workingDirectory,
+    required this.fileSystem,
   });
 
   final Logger logger;
   final String workingDirectory;
+  final FileSystem fileSystem;
 
   Future<void> runBuildRunner(String featurePath) async {
     final progress = logger.progress('Running build_runner ...');
@@ -19,7 +22,7 @@ class ProcessRunner {
     try {
       final packageName = await _readPackageName();
 
-      // featurePath z.B. "lib/features/auth" → "myapp|lib/features/auth/**"
+      // featurePath might be "lib/features/auth" → "myapp|lib/features/auth/**"
       final buildFilter = '$packageName|$featurePath/**';
 
       final result = await Process.run(
@@ -28,7 +31,7 @@ class ProcessRunner {
           'run',
           'build_runner',
           'build',
-          '--build-filter=$buildFilter',
+          // '--build-filter=$buildFilter',
           '--delete-conflicting-outputs',
         ],
         workingDirectory: workingDirectory,
@@ -67,7 +70,9 @@ class ProcessRunner {
   }
 
   Future<String> _readPackageName() async {
-    final pubspecFile = File(path.join(workingDirectory, 'pubspec.yaml'));
+    final pubspecFile = fileSystem.file(
+      path.join(workingDirectory, 'pubspec.yaml'),
+    );
 
     if (!await pubspecFile.exists()) {
       throw Exception('pubspec.yaml not found in $workingDirectory');

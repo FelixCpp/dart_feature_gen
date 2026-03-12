@@ -1,4 +1,4 @@
-# feature_gen 🚀
+# feature_gen
 
 A Dart CLI tool that generates clean, consistent feature structures for Flutter apps following clean architecture principles — including automatic `dart format` and optional `build_runner` execution.
 
@@ -43,16 +43,15 @@ lib/features/auth/
 │       └── auth_repository_impl.dart
 ├── domain/
 │   ├── models/
-│   │   └── auth_model.dart
 │   ├── repositories/
 │   │   └── auth_repository.dart
 │   └── usecases/
-│       └── auth_usecase.dart
 └── presentation/
-    └── bloc/
-        ├── auth_bloc.dart
-        ├── auth_event.dart
-        └── auth_state.dart
+    ├── bloc/
+    │   ├── auth_bloc.dart
+    │   ├── auth_event.dart
+    │   └── auth_state.dart
+    └── auth_screen.dart
 ```
 
 Each file is pre-populated with the correct class name (derived from the feature name), imports, and interface stubs — ready for you to fill in the business logic.

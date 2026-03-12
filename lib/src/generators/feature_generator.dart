@@ -1,5 +1,6 @@
 import 'dart:io' as io;
 
+import 'package:feature_gen/src/config/feature_config.dart';
 import 'package:feature_gen/src/generators/data_generator.dart';
 import 'package:feature_gen/src/generators/domain_generator.dart';
 import 'package:feature_gen/src/generators/presentation_generator.dart';
@@ -21,31 +22,32 @@ class FeatureGenerator {
 
   Future<void> generate({
     required String featureName,
-    required String basePath,
+    required FeatureGenConfig config,
   }) async {
-    final featurePath = path.join(basePath, featureName);
+    final featurePath = path.join(config.basePath, featureName);
     final processRunner = ProcessRunner(
       logger: logger,
       workingDirectory: workingDirectory,
+      fileSystem: fileSystem,
     );
 
     final progress = logger.progress('Generating feature "$featureName"');
     try {
       await DataGenerator(
         featureName: featureName,
-        basePath: basePath,
+        basePath: config.basePath,
         fileSystem: fileSystem,
       ).generate();
 
       await DomainGenerator(
         featureName: featureName,
-        basePath: basePath,
+        basePath: config.basePath,
         fileSystem: fileSystem,
       ).generate();
 
       await PresentationGenerator(
         featureName: featureName,
-        basePath: basePath,
+        basePath: config.basePath,
         fileSystem: fileSystem,
       ).generate();
 
@@ -55,12 +57,20 @@ class FeatureGenerator {
       return;
     }
 
-    await processRunner.runDartFormat(featurePath);
-
-    if (await _hasBuildRunner()) {
-      await processRunner.runBuildRunner(featurePath);
+    if (config.format) {
+      await processRunner.runDartFormat(featurePath);
     } else {
-      logger.info('Skipping build_runner (not found in pubspec.yaml)');
+      logger.info('Skipping code formatting (disabled via config)');
+    }
+
+    if (config.buildRunner) {
+      if (await _hasBuildRunner()) {
+        await processRunner.runBuildRunner(featurePath);
+      } else {
+        logger.info('Skipping build_runner (not found in pubspec.yaml)');
+      }
+    } else {
+      logger.info('Skipping build_runner (disabled via config)');
     }
   }
 
@@ -68,6 +78,7 @@ class FeatureGenerator {
     final pubspecFile = fileSystem.file(
       path.join(workingDirectory, 'pubspec.yaml'),
     );
+
     if (!await pubspecFile.exists()) {
       return false;
     }
