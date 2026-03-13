@@ -84,6 +84,7 @@ class SystemProcessRunner implements ProcessRunner {
       return false;
     }
 
+    // TODO(Felix): Be aware of commented out lines
     final content = await pubspecFile.readAsString();
     return content.contains('build_runner');
   }

@@ -35,6 +35,7 @@ import 'bloc/counter_bloc.dart';
 class CounterScreen extends StatelessWidget {
   const CounterScreen({super.key});
 
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CounterBloc()..add(const CounterEvent.onSetup()),
@@ -52,6 +53,7 @@ class _Scaffold extends StatelessWidget {
 
   final CounterState state;
 
+  @override
   Widget build(BuildContext state) {
     return const Placeholder();
   }

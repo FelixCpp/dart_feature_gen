@@ -17,6 +17,7 @@ import 'bloc/${featureName}_bloc.dart';
 class ${className}Screen extends StatelessWidget {
   const ${className}Screen({super.key});
 
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ${className}Bloc()..add(const ${className}Event.onSetup()),
@@ -34,6 +35,7 @@ class _Scaffold extends StatelessWidget {
 
   final ${className}State state;
 
+  @override
   Widget build(BuildContext state) {
     return const Placeholder();
   }
