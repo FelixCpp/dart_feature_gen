@@ -18,20 +18,40 @@ class GenerateCommand extends Command<void> {
       'output-dir',
       abbr: 'o',
       defaultsTo: 'lib/features',
-      help:
-          'Output directory for feature generation (overrides feature_gen.yaml)',
+      help: 'Output directory for feature generation',
+    );
+
+    argParser.addOption(
+      'feature-prefix',
+      defaultsTo: null,
+      valueHelp: 'feat',
+      help: 'Prefix that is put in front of the feature directory',
+    );
+
+    argParser.addOption(
+      'state-management-library',
+      defaultsTo: 'bloc',
+      valueHelp: 'bloc or cubit',
+      help: 'Prefix that is put in front of the feature directory',
+      allowed: ['bloc', 'cubit'],
+      allowedHelp: {
+        'bloc':
+            'Generate the presentation layer using flutter_bloc (bloc) & freezed',
+        'cubit':
+            'Generate the presentation layer using flutter_bloc (cubit) & freezed',
+      },
     );
 
     argParser.addFlag(
       'build',
       defaultsTo: true,
-      help: 'Run build_runner after generation (overrides feature_gen.yaml)',
+      help: 'Run build_runner after generation',
     );
 
     argParser.addFlag(
       'format',
       defaultsTo: true,
-      help: 'Run dart format after generation (overrides feature_gen.yaml)',
+      help: 'Run dart format after generation',
     );
   }
 
@@ -61,19 +81,20 @@ class GenerateCommand extends Command<void> {
       fileSystem: fileSystem,
     );
 
-    final config = await configLoader.load(
-      workingDirectory: io.Directory.current.path,
-    );
+    var config = await configLoader.load(
+        workingDirectory: io.Directory.current.path, featureName: args.first);
 
-    final mergedConfig = config.merge(
-      outputDirectory: argResults.wasParsed('output-dir')
-          ? argResults.option('output-dir')
-          : null,
-      format: argResults.wasParsed('format') ? argResults.flag('format') : null,
-      buildRunner: argResults.wasParsed('build')
-          ? argResults.flag('build')
-          : null,
-    );
+    if (argResults.option('output-dir') case String outputDir) {
+      config = config.copyWith(outputDirectory: outputDir);
+    }
+
+    if (argResults.wasParsed('format')) {
+      config = config.copyWith(format: argResults.flag('format'));
+    }
+
+    if (argResults.wasParsed('build')) {
+      config = config.copyWith(build: argResults.flag('build'));
+    }
 
     final generator = FeatureGenerator(
       logger: logger,
@@ -81,9 +102,6 @@ class GenerateCommand extends Command<void> {
       processRunner: processRunner,
     );
 
-    return generator.generate(
-      featureName: args.first,
-      config: mergedConfig,
-    );
+    return generator.generate(config: config);
   }
 }

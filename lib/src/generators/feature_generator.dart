@@ -23,32 +23,25 @@ class FeatureGenerator {
   String get workingDirectory => io.Directory.current.path;
 
   Future<void> generate({
-    required String featureName,
     required FeatureGenConfig config,
   }) async {
-    final featurePath = path.join(config.outputDirectory, featureName);
+    final featurePath = path.join(
+      config.outputDirectory,
+      config.featureDirName,
+    );
 
-    final progress = logger.progress('Generating feature "$featureName"');
+    final progress = logger.progress(
+      'Generating feature "${config.featureName}"',
+    );
+
     try {
-      await DataGenerator(
-        featureName: featureName,
-        outputDirectory: config.outputDirectory,
-        fileSystem: fileSystem,
-      ).generate();
+      await DataGenerator(config: config, fileSystem: fileSystem).generate();
+      await DomainGenerator(config: config, fileSystem: fileSystem).generate();
+      await PresentationGenerator(config: config, fileSystem: fileSystem)
+          .generate();
 
-      await DomainGenerator(
-        featureName: featureName,
-        outputDirectory: config.outputDirectory,
-        fileSystem: fileSystem,
-      ).generate();
-
-      await PresentationGenerator(
-        featureName: featureName,
-        outputDirectory: config.outputDirectory,
-        fileSystem: fileSystem,
-      ).generate();
-
-      progress.complete('Feature "$featureName" created successfully!');
+      progress
+          .complete('Feature "${config.featureName}" created successfully!');
     } catch (e) {
       progress.fail('Failed to generate feature: $e');
       return;
@@ -60,7 +53,7 @@ class FeatureGenerator {
       logger.info('Skipping code formatting (disabled via config)');
     }
 
-    if (config.buildRunner) {
+    if (config.build) {
       await processRunner.runBuildRunner(featurePath);
     } else {
       logger.info('Skipping build_runner (disabled via config)');

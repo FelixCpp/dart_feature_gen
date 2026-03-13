@@ -6,34 +6,52 @@ import 'package:yaml/yaml.dart';
 
 part 'feature_config.freezed.dart';
 
+enum StateManagementLibrary {
+  bloc,
+  cubit;
+
+  static StateManagementLibrary? parse(String value) {
+    final lowercased = value.toLowerCase();
+
+    if (lowercased == 'bloc') return StateManagementLibrary.bloc;
+    if (lowercased == 'cubit') return StateManagementLibrary.cubit;
+    return null;
+  }
+}
+
 @freezed
 sealed class FeatureGenConfig with _$FeatureGenConfig {
   const factory FeatureGenConfig({
+    required String featureName,
     required String outputDirectory,
+    required String? featurePrefix,
     required bool format,
-    required bool buildRunner,
+    required bool build,
+    required StateManagementLibrary smLibrary,
   }) = _FeatureGenConfig;
 
-  factory FeatureGenConfig.fallback() {
+  factory FeatureGenConfig.fallback(String featureName) {
     return FeatureGenConfig(
+      featureName: featureName,
       outputDirectory: 'lib/features',
+      featurePrefix: null,
       format: true,
-      buildRunner: true,
+      build: true,
+      smLibrary: StateManagementLibrary.bloc,
     );
   }
 }
 
-extension MergeFeatureGenConfigs on FeatureGenConfig {
-  FeatureGenConfig merge({
-    String? outputDirectory,
-    bool? format,
-    bool? buildRunner,
-  }) {
-    return FeatureGenConfig(
-      outputDirectory: outputDirectory ?? this.outputDirectory,
-      format: format ?? this.format,
-      buildRunner: buildRunner ?? this.buildRunner,
-    );
+extension FeatureDirName on FeatureGenConfig {
+  String get featureDirName {
+    final buffer = StringBuffer();
+
+    if (featurePrefix case String prefix) {
+      buffer.write('${prefix}_');
+    }
+
+    buffer.write(featureName);
+    return buffer.toString();
   }
 }
 
@@ -48,7 +66,10 @@ class ConfigLoader {
   final Logger logger;
   final FileSystem fileSystem;
 
-  Future<FeatureGenConfig> load({required String workingDirectory}) async {
+  Future<FeatureGenConfig> load({
+    required String workingDirectory,
+    required String featureName,
+  }) async {
     final yamlPath = path.join(workingDirectory, _configFileName);
     final configFile = fileSystem.file(yamlPath);
 
@@ -57,7 +78,7 @@ class ConfigLoader {
         '"$_configFileName" could not be found inside working directory. Falling back to default configuration.',
       );
 
-      return FeatureGenConfig.fallback();
+      return FeatureGenConfig.fallback(featureName);
     }
 
     final progress = logger.progress('Loading "$_configFileName" file ...');
@@ -72,15 +93,37 @@ class ConfigLoader {
       }
 
       progress.complete('"$_configFileName" has been loaded successfully.');
-      return FeatureGenConfig.fallback().merge(
-        outputDirectory: yaml['output_dir'] as String?,
-        format: yaml['format'] as bool?,
-        buildRunner: yaml['build_runner'] as bool?,
-      );
+      var config = FeatureGenConfig.fallback(featureName);
+      if (yaml['output-dir'] case String outputDir) {
+        config = config.copyWith(outputDirectory: outputDir);
+      }
+
+      if (yaml['feature-prefix'] case String featurePrefix) {
+        config = config.copyWith(featurePrefix: featurePrefix);
+      }
+
+      if (yaml['build'] case bool build) {
+        config = config.copyWith(build: build);
+      }
+
+      if (yaml['format'] case bool format) {
+        config = config.copyWith(format: format);
+      }
+
+      if (yaml['state-management-library'] case String smLibrary) {
+        final lib = StateManagementLibrary.parse(smLibrary);
+        if (lib != null) {
+          config = config.copyWith(smLibrary: lib);
+        } else {
+          logger.warn('Invalid state management library detected.');
+        }
+      }
+
+      return config;
     } catch (exception) {
       progress.fail('Error occurred: $exception');
       logger.info('Falling back to default config.');
-      return FeatureGenConfig.fallback();
+      return FeatureGenConfig.fallback(featureName);
     }
   }
 }

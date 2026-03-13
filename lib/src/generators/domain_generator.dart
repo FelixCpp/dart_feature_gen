@@ -1,28 +1,31 @@
+import 'package:feature_gen/src/config/feature_config.dart';
 import 'package:feature_gen/src/templates/domain_templates.dart';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as path;
 
 class DomainGenerator {
-  final String featureName;
-  final String outputDirectory;
+  final FeatureGenConfig config;
   final FileSystem fileSystem;
 
   const DomainGenerator({
-    required this.featureName,
-    required this.outputDirectory,
+    required this.config,
     required this.fileSystem,
   });
 
   Future<void> generate() async {
-    final featurePath = path.join(outputDirectory, featureName, 'domain');
+    final featurePath = path.join(
+      config.outputDirectory,
+      config.featureDirName,
+      'domain',
+    );
 
     await _createFile(
       path.join(
         featurePath,
         'repositories',
-        '${featureName}_repository.dart',
+        '${config.featureName}_repository.dart',
       ),
-      DomainTemplates.repository(featureName),
+      DomainTemplates.repository(config.featureName),
     );
 
     await _createDirectory(path.join(featurePath, 'models'));

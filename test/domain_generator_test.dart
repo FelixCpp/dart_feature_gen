@@ -1,3 +1,4 @@
+import 'package:feature_gen/src/config/feature_config.dart';
 import 'package:feature_gen/src/generators/domain_generator.dart';
 import 'package:file/file.dart';
 import 'package:test/test.dart';
@@ -11,8 +12,14 @@ void main() {
     setUp(() {
       fileSystem = MemoryFileSystem.test();
       generator = DomainGenerator(
-        featureName: 'counter',
-        outputDirectory: 'lib/features',
+        config: FeatureGenConfig(
+          featureName: 'counter',
+          outputDirectory: 'lib/features',
+          featurePrefix: null,
+          format: true,
+          build: true,
+          smLibrary: StateManagementLibrary.bloc,
+        ),
         fileSystem: fileSystem,
       );
     });

@@ -1,12 +1,8 @@
-class DomainTemplates {
-  static String _toPascalCase(String input) {
-    return input.split('_').map((word) {
-      return word[0].toUpperCase() + word.substring(1);
-    }).join();
-  }
+import 'package:recase/recase.dart';
 
+class DomainTemplates {
   static String repository(String featureName) {
-    final className = _toPascalCase(featureName);
+    final className = featureName.pascalCase;
 
     return '''
 abstract interface class ${className}Repository {

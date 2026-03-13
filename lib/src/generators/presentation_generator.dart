@@ -1,41 +1,70 @@
+import 'package:feature_gen/src/config/feature_config.dart';
 import 'package:feature_gen/src/templates/presentation_templates.dart';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as path;
 
 class PresentationGenerator {
-  final String featureName;
-  final String outputDirectory;
+  final FeatureGenConfig config;
   final FileSystem fileSystem;
 
   const PresentationGenerator({
-    required this.featureName,
-    required this.outputDirectory,
+    required this.config,
     required this.fileSystem,
   });
 
   Future<void> generate() async {
-    final featurePath = path.join(outputDirectory, featureName, 'presentation');
-
-    await _createFile(
-      path.join(featurePath, '${featureName}_screen.dart'),
-      PresentationTemplates.screen(featureName),
+    final featurePath = path.join(
+      config.outputDirectory,
+      config.featureDirName,
+      'presentation',
     );
 
+    await switch (config.smLibrary) {
+      StateManagementLibrary.bloc => _generateBloc(featurePath),
+      StateManagementLibrary.cubit => _generateCubit(featurePath)
+    };
+  }
+
+  Future<void> _generateCubit(String featurePath) async {
+    await _createDirectory(path.join(featurePath, 'cubit'));
+
+    await _createFile(
+      path.join(featurePath, '${config.featureName}_screen.dart'),
+      PresentationCubitTemplates.screen(config.featureName),
+    );
+
+    await _createFile(
+      path.join(featurePath, 'cubit', '${config.featureName}_cubit.dart'),
+      PresentationCubitTemplates.cubit(config.featureName),
+    );
+
+    await _createFile(
+      path.join(featurePath, 'cubit', '${config.featureName}_state.dart'),
+      PresentationCubitTemplates.state(config.featureName),
+    );
+  }
+
+  Future<void> _generateBloc(String featurePath) async {
     await _createDirectory(path.join(featurePath, 'bloc'));
 
     await _createFile(
-      path.join(featurePath, 'bloc', '${featureName}_bloc.dart'),
-      PresentationTemplates.bloc(featureName),
+      path.join(featurePath, '${config.featureName}_screen.dart'),
+      PresentationBlocTemplates.screen(config.featureName),
     );
 
     await _createFile(
-      path.join(featurePath, 'bloc', '${featureName}_event.dart'),
-      PresentationTemplates.event(featureName),
+      path.join(featurePath, 'bloc', '${config.featureName}_bloc.dart'),
+      PresentationBlocTemplates.bloc(config.featureName),
     );
 
     await _createFile(
-      path.join(featurePath, 'bloc', '${featureName}_state.dart'),
-      PresentationTemplates.state(featureName),
+      path.join(featurePath, 'bloc', '${config.featureName}_event.dart'),
+      PresentationBlocTemplates.event(config.featureName),
+    );
+
+    await _createFile(
+      path.join(featurePath, 'bloc', '${config.featureName}_state.dart'),
+      PresentationBlocTemplates.state(config.featureName),
     );
   }
 

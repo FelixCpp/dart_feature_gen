@@ -39,11 +39,13 @@ void main() {
 
     test('should call dart format and build_runner after generating', () async {
       await generator.generate(
-        featureName: 'auth',
         config: FeatureGenConfig(
+          featureName: 'auth',
           outputDirectory: 'features',
+          featurePrefix: null,
           format: true,
-          buildRunner: true,
+          build: true,
+          smLibrary: StateManagementLibrary.bloc,
         ),
       );
 
@@ -55,11 +57,13 @@ void main() {
       'should not call dart format or build_runner after generating',
       () async {
         await generator.generate(
-          featureName: 'auth',
           config: FeatureGenConfig(
+            featureName: 'auth',
             outputDirectory: 'features',
+            featurePrefix: null,
             format: false,
-            buildRunner: false,
+            build: false,
+            smLibrary: StateManagementLibrary.bloc,
           ),
         );
 
@@ -70,11 +74,13 @@ void main() {
 
     test('should call only build_runner after generating ', () async {
       await generator.generate(
-        featureName: 'auth',
         config: FeatureGenConfig(
+          featureName: 'auth',
           outputDirectory: 'features',
+          featurePrefix: null,
           format: false,
-          buildRunner: true,
+          build: true,
+          smLibrary: StateManagementLibrary.bloc,
         ),
       );
 
@@ -84,11 +90,13 @@ void main() {
 
     test('should call only dart format after generating ', () async {
       await generator.generate(
-        featureName: 'auth',
         config: FeatureGenConfig(
+          featureName: 'auth',
           outputDirectory: 'features',
+          featurePrefix: null,
           format: true,
-          buildRunner: false,
+          build: false,
+          smLibrary: StateManagementLibrary.bloc,
         ),
       );
 
