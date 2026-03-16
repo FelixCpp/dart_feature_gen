@@ -97,11 +97,18 @@ dart run bin/feature_gen.dart generate auth
 feature_gen generate auth
 ```
 
-### Custom base path
+### Custom output directory
 
 ```bash
 # Generate under a different directory
-feature_gen generate auth --path lib/src/features
+feature_gen generate auth --output-dir lib/src/features
+```
+
+### Directory prefix
+
+```bash
+# Generate using a prefix. Output: lib/src/features/feat_auth/...
+feature_gen generate auth --feature-prefix feat --output-dir lib/src/features
 ```
 
 ### Skip build_runner
@@ -130,7 +137,12 @@ Place a `feature_gen.yaml` file in your Flutter project root to set defaults:
 # feature_gen.yaml
 
 # Base path for generated features (default: lib/features)
-base_path: lib/features
+output-dir: lib/features
+
+# Prefix that is being put in front of the requested feature name.
+# Output might be "feat_auth" in case the feature has been named "auth"
+# Note that the prefix is being put separated using a "_" character.
+feature-prefix: feat
 
 # Run dart format after generation (default: true)
 format: true
