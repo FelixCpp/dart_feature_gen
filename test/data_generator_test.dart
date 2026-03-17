@@ -5,6 +5,7 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:test/test.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   group(DataGenerator, () {
@@ -32,7 +33,9 @@ void main() {
         await generator.generate(config);
 
         expect(
-          fileSystem.file('auth/data/daos/auth_dao.dart').readAsString(),
+          fileSystem
+              .file(path.join('auth', 'data', 'daos', 'auth_dao.dart'))
+              .readAsString(),
           completion(equals('''
 class AuthDao {
   // TODO: Implement Database-Access-Object
@@ -42,7 +45,12 @@ class AuthDao {
 
         expect(
             fileSystem
-                .file('auth/data/repositories/auth_repository_impl.dart')
+                .file(path.join(
+                  'auth',
+                  'data',
+                  'repositories',
+                  'auth_repository_impl.dart',
+                ))
                 .readAsString(),
             completion(equals('''
 import '../../domain/repositories/auth_repository.dart';
@@ -52,7 +60,10 @@ class AuthRepositoryImpl implements AuthRepository {
 }
 ''')));
 
-        expect(fileSystem.file('auth/data/di/auth_module.dart').readAsString(),
+        expect(
+            fileSystem
+                .file(path.join('auth', 'data', 'di', 'auth_module.dart'))
+                .readAsString(),
             completion(equals('''
 // TODO: Implement Dependency-Injection Module
 ''')));

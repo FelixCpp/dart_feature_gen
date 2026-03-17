@@ -5,6 +5,7 @@ import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:test/test.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   group(DomainGenerator, () {
@@ -35,12 +36,17 @@ void main() {
       await generator.generate(config);
 
       expect(
-        fileSystem.isDirectory('auth/domain/models'),
+        fileSystem.isDirectory(path.join('auth', 'domain', 'models')),
         completion(isTrue),
       );
       expect(
         fileSystem
-            .file('auth/domain/repositories/auth_repository.dart')
+            .file(path.join(
+              'auth',
+              'domain',
+              'repositories',
+              'auth_repository.dart',
+            ))
             .readAsString(),
         completion(equals('''
 abstract interface class AuthRepository {
@@ -49,11 +55,21 @@ abstract interface class AuthRepository {
 ''')),
       );
       expect(
-        fileSystem.isDirectory('auth/domain/usecases/interactors'),
+        fileSystem.isDirectory(path.join(
+          'auth',
+          'domain',
+          'usecases',
+          'interactors',
+        )),
         completion(isTrue),
       );
       expect(
-        fileSystem.isDirectory('auth/domain/usecases/observers'),
+        fileSystem.isDirectory(path.join(
+          'auth',
+          'domain',
+          'usecases',
+          'observers',
+        )),
         completion(isTrue),
       );
     });
