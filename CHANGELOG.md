@@ -8,6 +8,7 @@ Versions follow [Semantic Versioning](https://semver.org).
 ### Bug Fixes
 
 - Fixed path creation ([`4676356`](467635688a78735e154432c5a14f131681d31361))
+- Fixed changelog before released ([`efb93a1`](efb93a10831cbea09e4efa357be8cb3f10d07d03))
 
 ### Other
 
@@ -20,6 +21,8 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Added flags for code formatting & generation ([`c44f99c`](c44f99c1cbca03a2079ce88e4c48848abab532c9))
 - Removed unused imported from generated code ([`3be7f49`](3be7f49802ac024a22c151fb39b0ec50c9680dcc))
 - Merge pull request #8 from FelixCpp/develop ([`51bd2b5`](51bd2b5a87c8f26f4e9eaf48d7cf40dd1220a49d))
+- Merge pull request #9 from FelixCpp/develop ([`b3adcfc`](b3adcfc9ef3d5befab1b36fa395c548dddf9058e))
+- Changelog fix ([`1a52403`](1a52403045707cd447f70c66d79727e7e31e0513))
 
 ## [1.0.0] - 2026-03-16
 
