@@ -25,6 +25,15 @@ class DataGenerator {
     await io.createFile(
       joinAll([
         dataDirectory,
+        'datasources',
+        '${config.featureName}_datasource.dart'
+      ]),
+      _Templates.datasource(config.featureName),
+    );
+
+    await io.createFile(
+      joinAll([
+        dataDirectory,
         'repositories',
         '${config.featureName}_repository_impl.dart'
       ]),
@@ -51,6 +60,7 @@ class ${className}Dao {
 
   static String repositoryImpl(String featureName) {
     final className = featureName.pascalCase;
+
     return '''
 import '../../domain/repositories/${featureName}_repository.dart';
 
@@ -61,8 +71,26 @@ class ${className}RepositoryImpl implements ${className}Repository {
   }
 
   static String diModule(String featureName) {
+    final className = featureName.pascalCase;
+
     return '''
-// TODO: Implement Dependency-Injection Module
+class ${className}Module {
+  // TODO: Implement module
+}
+''';
+  }
+
+  static String datasource(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+abstract interface class ${className}Datasource {
+  // TODO: Implement datasource contract
+}
+
+class Remote${className}Datasource implements ${className}Datasource {
+  // TODO: Implement remote datasource
+}
 ''';
   }
 }

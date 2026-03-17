@@ -46,6 +46,22 @@ class AuthDao {
         );
 
         expect(
+          fileSystem
+              .file(path.join(
+                  'auth', 'data', 'datasources', 'auth_datasource.dart'))
+              .readAsString(),
+          completion(equals('''
+abstract interface class AuthDatasource {
+  // TODO: Implement datasource contract
+}
+
+class RemoteAuthDatasource implements AuthDatasource {
+  // TODO: Implement remote datasource
+}
+''')),
+        );
+
+        expect(
             fileSystem
                 .file(path.join(
                   'auth',
@@ -67,7 +83,9 @@ class AuthRepositoryImpl implements AuthRepository {
                 .file(path.join('auth', 'data', 'di', 'auth_module.dart'))
                 .readAsString(),
             completion(equals('''
-// TODO: Implement Dependency-Injection Module
+class AuthModule {
+  // TODO: Implement module
+}
 ''')));
       },
     );
