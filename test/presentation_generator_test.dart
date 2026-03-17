@@ -28,6 +28,8 @@ void main() {
           featurePrefix: null,
           outputDirectory: '',
           stateManagement: StateManagement.bloc,
+          runCodeFormatter: true,
+          runCodeGenerator: true,
         );
 
         await generator.generate(config);
@@ -158,6 +160,8 @@ class _Scaffold extends StatelessWidget {
           featurePrefix: null,
           outputDirectory: '',
           stateManagement: StateManagement.cubit,
+          runCodeFormatter: true,
+          runCodeGenerator: true,
         );
 
         await generator.generate(config);

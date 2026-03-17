@@ -31,6 +31,8 @@ void main() {
         featurePrefix: null,
         outputDirectory: '',
         stateManagement: StateManagement.bloc,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
       );
 
       await generator.generate(config);

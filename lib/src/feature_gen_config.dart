@@ -15,6 +15,8 @@ sealed class FeatureGenConfig with _$FeatureGenConfig {
     required String? featurePrefix,
     required String outputDirectory,
     required StateManagement stateManagement,
+    required bool runCodeFormatter,
+    required bool runCodeGenerator,
   }) = _FeatureGenConfig;
 }
 

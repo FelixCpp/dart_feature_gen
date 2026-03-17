@@ -31,6 +31,18 @@ class GenerateCommand extends Command<CliFeatureGenConfig> {
       valueHelp: 'bloc',
       allowed: {'bloc', 'cubit'},
     );
+
+    argParser.addFlag(
+      'code-format',
+      defaultsTo: true,
+      help: 'Whether to run dart format afterwards.',
+    );
+
+    argParser.addFlag(
+      'code-generate',
+      defaultsTo: true,
+      help: 'Whether to run the build_runner afterwards.',
+    );
   }
 
   final Logger logger;
@@ -52,12 +64,19 @@ class GenerateCommand extends Command<CliFeatureGenConfig> {
     final featurePrefix = results.option('feature-prefix');
     final outputDir = results.option('output-dir');
     final stateManagement = results.option('state-management');
+    final runCodeFormatter =
+        results.wasParsed('code-format') ? results.flag('code-format') : null;
+    final runCodeGenerator = results.wasParsed('code-generate')
+        ? results.flag('code-generate')
+        : null;
 
     return CliFeatureGenConfig(
       featureName: featureName,
       featurePrefix: featurePrefix,
       outputDir: outputDir,
       stateManagement: stateManagement,
+      runCodeFormatter: runCodeFormatter,
+      runCodeGenerator: runCodeGenerator,
     );
   }
 }

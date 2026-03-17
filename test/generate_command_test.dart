@@ -36,6 +36,8 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, null);
+      expect(config?.runCodeGenerator, null);
     });
 
     test('should create config with prefix', () async {
@@ -52,6 +54,8 @@ void main() {
       expect(config?.featurePrefix, equals('feat'));
       expect(config?.outputDir, null);
       expect(config?.stateManagement, null);
+      expect(config?.runCodeFormatter, null);
+      expect(config?.runCodeGenerator, null);
     });
 
     test('should create config with output-dir', () async {
@@ -68,6 +72,8 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, equals('my_features'));
       expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, null);
+      expect(config?.runCodeGenerator, null);
     });
 
     test('should create config with state-management bloc', () async {
@@ -84,6 +90,8 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, equals('bloc'));
+      expect(config?.runCodeFormatter, null);
+      expect(config?.runCodeGenerator, null);
     });
 
     test('should create config with state-management cubit', () async {
@@ -100,6 +108,76 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, equals('cubit'));
+      expect(config?.runCodeFormatter, null);
+      expect(config?.runCodeGenerator, null);
+    });
+
+    test('should create config with code formatter turned on', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--code-format',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, isTrue);
+      expect(config?.runCodeGenerator, isNull);
+    });
+
+    test('should create config with code formatter turned off', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--no-code-format',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, isFalse);
+      expect(config?.runCodeGenerator, isNull);
+    });
+
+    test('should create config with code generator turned on', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--code-generate',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isTrue);
+    });
+
+    test('should create config with code generator turned off', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--no-code-generate',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isFalse);
     });
   });
 }

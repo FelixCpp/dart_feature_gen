@@ -9,5 +9,7 @@ sealed class CliFeatureGenConfig with _$CliFeatureGenConfig {
     required String? featurePrefix,
     required String? outputDir,
     required String? stateManagement,
+    required bool? runCodeFormatter,
+    required bool? runCodeGenerator,
   }) = _CliFeatureGenConfig;
 }

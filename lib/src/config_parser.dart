@@ -16,6 +16,8 @@ FeatureGenConfig mergeConfigs({
         _makeOutputDir(io, cli.outputDir ?? yaml.outputDir ?? 'lib/features'),
     stateManagement:
         _parseStateManagement(cli.stateManagement ?? yaml.stateManagement),
+    runCodeFormatter: cli.runCodeFormatter ?? yaml.runCodeFormatter ?? true,
+    runCodeGenerator: cli.runCodeGenerator ?? yaml.runCodeGenerator ?? true,
   );
 }
 

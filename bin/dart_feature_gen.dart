@@ -18,21 +18,30 @@ Future<void> main(List<String> arguments) async {
   );
 
   runner.addCommand(GenerateCommand(logger: logger));
-  final yamlLoader = YamlLoader(logger: logger);
 
-  final contents = await io.readFile('dart_feature_gen.yaml') ?? '';
-  final yamlConfig = await yamlLoader.run(contents);
   final cliConfig = await runner.run(arguments);
   if (cliConfig == null) {
-    logger.err('Failed to read cli configuration');
     return;
   }
+
+  final yamlLoader = YamlLoader(logger: logger);
+  final contents = await io.readFile('dart_feature_gen.yaml') ?? '';
+  final yamlConfig = await yamlLoader.run(contents);
 
   final mergedConfig = mergeConfigs(io: io, cli: cliConfig, yaml: yamlConfig);
   final generator = FeatureGenerator(logger: logger, io: io);
   await generator.generate(mergedConfig);
 
   final processRunner = SystemProcessRunner(logger: logger);
-  await processRunner.runBuildRunner(mergedConfig);
-  await processRunner.runDartFormat(mergedConfig);
+  if (mergedConfig.runCodeGenerator) {
+    await processRunner.runBuildRunner(mergedConfig);
+  } else {
+    logger.info('Skipping code generation');
+  }
+
+  if (mergedConfig.runCodeFormatter) {
+    await processRunner.runDartFormat(mergedConfig);
+  } else {
+    logger.info('Skipping code formatting');
+  }
 }

@@ -8,15 +8,12 @@ class YamlLoader {
   final Logger logger;
 
   Future<YamlFeatureGenConfig> run(String yamlSource) async {
-    final progress = logger.progress(
-      'Reading feature configuration from yaml source.',
-    );
-
     Map<dynamic, dynamic> yaml;
     try {
       yaml = loadYaml(yamlSource) as Map;
+      logger.success('Yaml file has been read successfully.');
     } catch (exception) {
-      progress.complete(
+      logger.success(
         'Failed to read valid feature configuration. Using fallback',
       );
       yaml = {};
@@ -26,6 +23,8 @@ class YamlLoader {
       featurePrefix: yaml['feature-prefix'] as String?,
       outputDir: yaml['output-dir'] as String?,
       stateManagement: yaml['state-management'] as String?,
+      runCodeFormatter: yaml['code-format'] as bool?,
+      runCodeGenerator: yaml['code-generate'] as bool?,
     );
   }
 }

@@ -18,6 +18,8 @@ mixin _$FeatureGenConfig {
   String? get featurePrefix;
   String get outputDirectory;
   StateManagement get stateManagement;
+  bool get runCodeFormatter;
+  bool get runCodeGenerator;
 
   /// Create a copy of FeatureGenConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -39,16 +41,20 @@ mixin _$FeatureGenConfig {
             (identical(other.outputDirectory, outputDirectory) ||
                 other.outputDirectory == outputDirectory) &&
             (identical(other.stateManagement, stateManagement) ||
-                other.stateManagement == stateManagement));
+                other.stateManagement == stateManagement) &&
+            (identical(other.runCodeFormatter, runCodeFormatter) ||
+                other.runCodeFormatter == runCodeFormatter) &&
+            (identical(other.runCodeGenerator, runCodeGenerator) ||
+                other.runCodeGenerator == runCodeGenerator));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDirectory, stateManagement);
+      outputDirectory, stateManagement, runCodeFormatter, runCodeGenerator);
 
   @override
   String toString() {
-    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement)';
+    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -62,7 +68,9 @@ abstract mixin class $FeatureGenConfigCopyWith<$Res> {
       {String featureName,
       String? featurePrefix,
       String outputDirectory,
-      StateManagement stateManagement});
+      StateManagement stateManagement,
+      bool runCodeFormatter,
+      bool runCodeGenerator});
 }
 
 /// @nodoc
@@ -82,6 +90,8 @@ class _$FeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDirectory = null,
     Object? stateManagement = null,
+    Object? runCodeFormatter = null,
+    Object? runCodeGenerator = null,
   }) {
     return _then(_self.copyWith(
       featureName: null == featureName
@@ -100,6 +110,14 @@ class _$FeatureGenConfigCopyWithImpl<$Res>
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
               as StateManagement,
+      runCodeFormatter: null == runCodeFormatter
+          ? _self.runCodeFormatter
+          : runCodeFormatter // ignore: cast_nullable_to_non_nullable
+              as bool,
+      runCodeGenerator: null == runCodeGenerator
+          ? _self.runCodeGenerator
+          : runCodeGenerator // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -195,16 +213,26 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String featureName, String? featurePrefix,
-            String outputDirectory, StateManagement stateManagement)?
+    TResult Function(
+            String featureName,
+            String? featurePrefix,
+            String outputDirectory,
+            StateManagement stateManagement,
+            bool runCodeFormatter,
+            bool runCodeGenerator)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _FeatureGenConfig() when $default != null:
-        return $default(_that.featureName, _that.featurePrefix,
-            _that.outputDirectory, _that.stateManagement);
+        return $default(
+            _that.featureName,
+            _that.featurePrefix,
+            _that.outputDirectory,
+            _that.stateManagement,
+            _that.runCodeFormatter,
+            _that.runCodeGenerator);
       case _:
         return orElse();
     }
@@ -225,15 +253,25 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String featureName, String? featurePrefix,
-            String outputDirectory, StateManagement stateManagement)
+    TResult Function(
+            String featureName,
+            String? featurePrefix,
+            String outputDirectory,
+            StateManagement stateManagement,
+            bool runCodeFormatter,
+            bool runCodeGenerator)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _FeatureGenConfig():
-        return $default(_that.featureName, _that.featurePrefix,
-            _that.outputDirectory, _that.stateManagement);
+        return $default(
+            _that.featureName,
+            _that.featurePrefix,
+            _that.outputDirectory,
+            _that.stateManagement,
+            _that.runCodeFormatter,
+            _that.runCodeGenerator);
     }
   }
 
@@ -251,15 +289,25 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String featureName, String? featurePrefix,
-            String outputDirectory, StateManagement stateManagement)?
+    TResult? Function(
+            String featureName,
+            String? featurePrefix,
+            String outputDirectory,
+            StateManagement stateManagement,
+            bool runCodeFormatter,
+            bool runCodeGenerator)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _FeatureGenConfig() when $default != null:
-        return $default(_that.featureName, _that.featurePrefix,
-            _that.outputDirectory, _that.stateManagement);
+        return $default(
+            _that.featureName,
+            _that.featurePrefix,
+            _that.outputDirectory,
+            _that.stateManagement,
+            _that.runCodeFormatter,
+            _that.runCodeGenerator);
       case _:
         return null;
     }
@@ -273,7 +321,9 @@ class _FeatureGenConfig implements FeatureGenConfig {
       {required this.featureName,
       required this.featurePrefix,
       required this.outputDirectory,
-      required this.stateManagement});
+      required this.stateManagement,
+      required this.runCodeFormatter,
+      required this.runCodeGenerator});
 
   @override
   final String featureName;
@@ -283,6 +333,10 @@ class _FeatureGenConfig implements FeatureGenConfig {
   final String outputDirectory;
   @override
   final StateManagement stateManagement;
+  @override
+  final bool runCodeFormatter;
+  @override
+  final bool runCodeGenerator;
 
   /// Create a copy of FeatureGenConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -304,16 +358,20 @@ class _FeatureGenConfig implements FeatureGenConfig {
             (identical(other.outputDirectory, outputDirectory) ||
                 other.outputDirectory == outputDirectory) &&
             (identical(other.stateManagement, stateManagement) ||
-                other.stateManagement == stateManagement));
+                other.stateManagement == stateManagement) &&
+            (identical(other.runCodeFormatter, runCodeFormatter) ||
+                other.runCodeFormatter == runCodeFormatter) &&
+            (identical(other.runCodeGenerator, runCodeGenerator) ||
+                other.runCodeGenerator == runCodeGenerator));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDirectory, stateManagement);
+      outputDirectory, stateManagement, runCodeFormatter, runCodeGenerator);
 
   @override
   String toString() {
-    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement)';
+    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -329,7 +387,9 @@ abstract mixin class _$FeatureGenConfigCopyWith<$Res>
       {String featureName,
       String? featurePrefix,
       String outputDirectory,
-      StateManagement stateManagement});
+      StateManagement stateManagement,
+      bool runCodeFormatter,
+      bool runCodeGenerator});
 }
 
 /// @nodoc
@@ -349,6 +409,8 @@ class __$FeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDirectory = null,
     Object? stateManagement = null,
+    Object? runCodeFormatter = null,
+    Object? runCodeGenerator = null,
   }) {
     return _then(_FeatureGenConfig(
       featureName: null == featureName
@@ -367,6 +429,14 @@ class __$FeatureGenConfigCopyWithImpl<$Res>
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
               as StateManagement,
+      runCodeFormatter: null == runCodeFormatter
+          ? _self.runCodeFormatter
+          : runCodeFormatter // ignore: cast_nullable_to_non_nullable
+              as bool,
+      runCodeGenerator: null == runCodeGenerator
+          ? _self.runCodeGenerator
+          : runCodeGenerator // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
