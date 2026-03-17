@@ -1,0 +1,62 @@
+import 'package:dart_feature_gen/src/feature_gen_config.dart';
+import 'package:dart_feature_gen/src/generators/data_generator.dart';
+import 'package:dart_feature_gen/src/io/feature_gen_io.dart';
+import 'package:file/file.dart';
+import 'package:file/memory.dart';
+import 'package:mason_logger/mason_logger.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group(DataGenerator, () {
+    late FileSystem fileSystem;
+    late DataGenerator generator;
+
+    setUp(() {
+      fileSystem = MemoryFileSystem.test();
+
+      final logger = Logger(level: Level.quiet);
+      final io = FeatureGenIO(fileSystem: fileSystem, logger: logger);
+      generator = DataGenerator(logger: logger, io: io);
+    });
+
+    test(
+      'should generate directories and files with correct content',
+      () async {
+        final config = FeatureGenConfig(
+          featureName: 'auth',
+          featurePrefix: null,
+          outputDirectory: '',
+          stateManagement: StateManagement.bloc,
+        );
+
+        await generator.generate(config);
+
+        expect(
+          fileSystem.file('auth/data/daos/auth_dao.dart').readAsString(),
+          completion(equals('''
+class AuthDao {
+  // TODO: Implement Database-Access-Object
+}
+''')),
+        );
+
+        expect(
+            fileSystem
+                .file('auth/data/repositories/auth_repository_impl.dart')
+                .readAsString(),
+            completion(equals('''
+import '../../domain/repositories/auth_repository.dart';
+
+class AuthRepositoryImpl implements AuthRepository {
+  // TODO: Implement repository
+}
+''')));
+
+        expect(fileSystem.file('auth/data/di/auth_module.dart').readAsString(),
+            completion(equals('''
+// TODO: Implement Dependency-Injection Module
+''')));
+      },
+    );
+  });
+}

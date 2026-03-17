@@ -1,6 +1,5 @@
 import 'package:args/command_runner.dart';
 import 'package:dart_feature_gen/src/cli/cli_feature_gen_config.dart';
-import 'package:dart_feature_gen/src/yaml/yaml_feature_gen_config.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 class GenerateCommand extends Command<CliFeatureGenConfig> {

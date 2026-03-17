@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:path/path.dart';
 
 part 'feature_gen_config.freezed.dart';
 
@@ -17,12 +18,11 @@ sealed class FeatureGenConfig with _$FeatureGenConfig {
   }) = _FeatureGenConfig;
 }
 
-@freezed
-sealed class RawFeatureGenConfig with _$RawFeatureGenConfig {
-  const factory RawFeatureGenConfig({
-    required String? featureName,
-    required String? featurePrefix,
-    required String? outputDir,
-    required String? stateManagement,
-  }) = _RawFeatureGenConfig;
+extension FeaturePath on FeatureGenConfig {
+  String get featurePath {
+    final featureNameWithPrefix =
+        '${featurePrefix != null ? '${featurePrefix}_' : ''}$featureName';
+
+    return join(outputDirectory, featureNameWithPrefix);
+  }
 }
