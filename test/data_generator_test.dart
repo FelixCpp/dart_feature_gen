@@ -1,8 +1,11 @@
-import 'package:dart_feature_gen/src/config/feature_config.dart';
+import 'package:dart_feature_gen/src/feature_gen_config.dart';
 import 'package:dart_feature_gen/src/generators/data_generator.dart';
+import 'package:dart_feature_gen/src/io/feature_gen_io.dart';
 import 'package:file/file.dart';
-import 'package:test/test.dart';
 import 'package:file/memory.dart';
+import 'package:mason_logger/mason_logger.dart';
+import 'package:test/test.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
   group(DataGenerator, () {
@@ -11,83 +14,80 @@ void main() {
 
     setUp(() {
       fileSystem = MemoryFileSystem.test();
-      generator = DataGenerator(
-        config: FeatureGenConfig(
-          featureName: 'counter',
-          outputDirectory: 'lib/features',
+
+      final logger = Logger(level: Level.quiet);
+      final io = FeatureGenIO(fileSystem: fileSystem, logger: logger);
+      generator = DataGenerator(logger: logger, io: io);
+    });
+
+    test(
+      'should generate directories and files with correct content',
+      () async {
+        final config = FeatureGenConfig(
+          featureName: 'auth',
           featurePrefix: null,
-          format: true,
-          build: true,
-          smLibrary: StateManagementLibrary.bloc,
-        ),
-        fileSystem: fileSystem,
-      );
-    });
+          outputDirectory: '',
+          stateManagement: StateManagement.bloc,
+          runCodeFormatter: true,
+          runCodeGenerator: true,
+        );
 
-    test('should generate data directory', () async {
-      await generator.generate();
+        await generator.generate(config);
 
-      expect(
-        fileSystem
-            .file('lib/features/counter/data/daos/counter_dao.dart')
-            .readAsString(),
-        completion(
-          equals('''
-class CounterDao {
-  // TODO: Implement DAO
+        expect(
+          fileSystem
+              .file(path.join('auth', 'data', 'daos', 'auth_dao.dart'))
+              .readAsString(),
+          completion(equals('''
+class AuthDao {
+  // TODO: Implement Database-Access-Object
 }
-'''),
-        ),
-      );
+''')),
+        );
 
-      expect(
-        fileSystem
-            .file(
-              'lib/features/counter/data/repositories/counter_repository_impl.dart',
-            )
-            .readAsString(),
-        completion(
-          equals('''
-import '../../domain/repositories/counter_repository.dart';
-
-class CounterRepositoryImpl implements CounterRepository {
-  const CounterRepositoryImpl();
-}
-'''),
-        ),
-      );
-
-      expect(
-        fileSystem
-            .file(
-              'lib/features/counter/data/datasources/counter_remote_datasource.dart',
-            )
-            .readAsString(),
-        completion(
-          equals('''
-abstract class CounterRemoteDatasource {
-  // TODO: Define datasource contract
+        expect(
+          fileSystem
+              .file(path.join(
+                  'auth', 'data', 'datasources', 'auth_datasource.dart'))
+              .readAsString(),
+          completion(equals('''
+abstract interface class AuthDatasource {
+  // TODO: Implement datasource contract
 }
 
-class CounterRemoteDatasourceImpl implements CounterRemoteDatasource {
-  // TODO: Implement datasource
+class RemoteAuthDatasource implements AuthDatasource {
+  // TODO: Implement remote datasource
 }
-'''),
-        ),
-      );
+''')),
+        );
 
-      expect(
-        fileSystem
-            .file(
-              'lib/features/counter/data/di/counter_data_module.dart',
-            )
-            .readAsString(),
-        completion(
-          equals('''
-// Dependency Injection for Counter feature (data layer)
-'''),
-        ),
-      );
-    });
+        expect(
+            fileSystem
+                .file(path.join(
+                  'auth',
+                  'data',
+                  'repositories',
+                  'auth_repository_impl.dart',
+                ))
+                .readAsString(),
+            completion(equals('''
+import '../../domain/repositories/auth_repository.dart';
+
+class AuthRepositoryImpl implements AuthRepository {
+  // TODO: Implement repository
+}
+''')));
+
+        expect(
+            fileSystem
+                .file(path.join('auth', 'data', 'di', 'auth_module.dart'))
+                .readAsString(),
+            completion(equals('''
+class AuthModule {
+  // TODO: Implement module
+}
+''')));
+      },
+    );
   });
 }
