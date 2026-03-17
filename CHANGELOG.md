@@ -23,6 +23,8 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Merge pull request #8 from FelixCpp/develop ([`51bd2b5`](51bd2b5a87c8f26f4e9eaf48d7cf40dd1220a49d))
 - Merge pull request #9 from FelixCpp/develop ([`b3adcfc`](b3adcfc9ef3d5befab1b36fa395c548dddf9058e))
 - Changelog fix ([`1a52403`](1a52403045707cd447f70c66d79727e7e31e0513))
+- Readme fixes ([`4ea13ee`](4ea13eeccd7c738dd57fb91ff83957ed4c526585))
+- Merge pull request #10 from FelixCpp/develop ([`82a493e`](82a493ecbed97dda159add365af3d7ccbfbe2ef5))
 
 ## [1.0.0] - 2026-03-16
 
