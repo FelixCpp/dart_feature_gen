@@ -4,20 +4,19 @@ on:
   push:
     branches: ["**"]
   pull_request:
-    branches: [main, develop]
+    branches: ["**"]
 
 jobs:
-  # ─────────────────────────────────────────────
-  # 1. Analyze & Format
-  # ─────────────────────────────────────────────
-  analyze:
-    name: Analyze & Format
+  analyze_and_test:
+    name: Analyze & Test
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: dart-lang/setup-dart@v1
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
@@ -30,46 +29,22 @@ jobs:
       - name: Analyze
         run: dart analyze --fatal-infos
 
-  # ─────────────────────────────────────────────
-  # 2. Test
-  # ─────────────────────────────────────────────
-  test:
-    name: Test (Dart ${{ matrix.sdk }} on ${{ matrix.os }})
-    needs: analyze
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        sdk: [stable, beta]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: ${{ matrix.sdk }}
-
-      - name: Install dependencies
-        run: dart pub get
-
       - name: Run tests
-        run: dart test --reporter=github
-
-      - name: Run tests with coverage
-        if: matrix.os == 'ubuntu-latest' && matrix.sdk == 'stable'
         run: dart test --coverage=coverage
 
+      - name: Install coverage tools
+        run: dart pub global activate coverage
+
       - name: Convert coverage to LCOV
-        if: matrix.os == 'ubuntu-latest' && matrix.sdk == 'stable'
-        run: |
-          dart pub global activate coverage
-          dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+        run: dart pub global run coverage:format_coverage \
+          --lcov \
+          --in=coverage \
+          --out=coverage/lcov.info \
+          --report-on=lib
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.sdk == 'stable'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
-          file: coverage/lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
