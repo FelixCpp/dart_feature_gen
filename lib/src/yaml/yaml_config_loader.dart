@@ -5,6 +5,32 @@ import 'package:path/path.dart' as path;
 import 'package:mason_logger/mason_logger.dart';
 import 'package:yaml/yaml.dart';
 
+Future<Directory?> findRootDirectory({
+  required FeatureGenIO io,
+  required Directory startingDirectory,
+  required String targetFileName,
+}) async {
+  var currentDirectory = startingDirectory;
+
+  while (true) {
+    final configFile = io.getFile(path.join(
+      currentDirectory.path,
+      targetFileName,
+    ));
+
+    if (await configFile.exists()) {
+      return currentDirectory;
+    }
+
+    final parent = currentDirectory.parent;
+    if (currentDirectory == parent) {
+      return null;
+    }
+
+    currentDirectory = parent;
+  }
+}
+
 class YamlConfigLoader {
   const YamlConfigLoader({
     required this.io,
@@ -48,41 +74,21 @@ class YamlConfigLoader {
   }
 
   Future<String?> readYamlConfigFile() async {
-    final configFile = await findConfigFile();
+    final rootDirectory = await findRootDirectory(
+        io: io,
+        startingDirectory: io.getCwdDir(),
+        targetFileName: 'dart_feature_gen.yaml');
+
     if (configFile == null) {
       logger.warn('Config file not found.');
       return null;
     }
 
+    final configFile =
+        io.getFile(path.join(rootDirectory.path, 'dart_feature_gen.yaml'));
+
     logger.success('Config file has been found. Reading contents ...');
     final contents = await configFile.readAsString();
     return contents;
-  }
-
-  Future<File?> findConfigFile({
-    String configFileName = 'dart_feature_gen.yaml',
-  }) async {
-    Directory current = io.getCwdDir();
-
-    while (true) {
-      final configFile = io.getFile(path.join(current.path, configFileName));
-
-      if (await configFile.exists()) {
-        return configFile;
-      }
-
-      final pubspec = io.getFile(path.join(current.path, 'pubspec.yaml'));
-      if (await pubspec.exists()) {
-        return null;
-      }
-
-      final parent = current.parent;
-
-      if (parent.path == current.path) {
-        return null;
-      }
-
-      current = parent;
-    }
   }
 }
