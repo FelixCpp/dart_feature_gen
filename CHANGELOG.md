@@ -11,6 +11,11 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Fixed changelog before released ([`efb93a1`](efb93a10831cbea09e4efa357be8cb3f10d07d03))
 - Fix lcov coverage ([`189899b`](189899bec9b35ea87bbcb44b5ad4507859d9eccc))
 - Fixed publishing step ([`a182289`](a1822899a506a3cb2d2c65331769eefae5ebbb26))
+- Fixed publishing step ([`810493f`](810493fe008c151e58af934ca4837404cf2c14d9))
+
+### Miscellaneous
+
+- Chore: update CHANGELOG.md for v1.1.0 ([`8f97274`](8f972746a35a3d2a675579efe851ae66b042903a))
 
 ### Other
 
