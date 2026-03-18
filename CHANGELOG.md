@@ -12,11 +12,13 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Fix lcov coverage ([`189899b`](189899bec9b35ea87bbcb44b5ad4507859d9eccc))
 - Fixed publishing step ([`a182289`](a1822899a506a3cb2d2c65331769eefae5ebbb26))
 - Fixed publishing step ([`810493f`](810493fe008c151e58af934ca4837404cf2c14d9))
+- Fixed publishing step ([`1f198ea`](1f198eac545256e8744985acdbc528fc09e8d16b))
 
 ### Miscellaneous
 
 - Chore: update CHANGELOG.md for v1.1.0 ([`8f97274`](8f972746a35a3d2a675579efe851ae66b042903a))
 - Chore: update CHANGELOG.md for v1.1.0 ([`88df41c`](88df41cad6cbf3adcadfc53174e13bb012f6f2c8))
+- Chore: update CHANGELOG.md for v1.1.0 ([`8f48953`](8f489537c01df12f1880071e4c1afa38f556ecae))
 
 ### Other
 
@@ -35,6 +37,10 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Merge pull request #10 from FelixCpp/develop ([`82a493e`](82a493ecbed97dda159add365af3d7ccbfbe2ef5))
 - Merge pull request #11 from FelixCpp/develop ([`06a2d17`](06a2d17feab119b48f576ba76dd86991f4d60f3c))
 - Publishing... ([`00999e6`](00999e658f4669e93c56bb698b33431e4771471d))
+- Initial plan ([`77a4a8d`](77a4a8d14cb9077c039c185a63fd2abea04867a6))
+- Merge pull request #12 from FelixCpp/copilot/setup-ci-cd-process ([`f003e54`](f003e5425ef0dfefba2c78ca6b057fb51f3c1ce9))
+- Merge pull request #11 from FelixCpp/develop ([`baf3a3d`](baf3a3d84e3b6e3efd2338ca9994b19fe6a17255))
+- Removed publish.yaml file ([`36fd975`](36fd97529a31497bade8de606a248e09ca7db018))
 
 ## [1.0.0] - 2026-03-16
 
