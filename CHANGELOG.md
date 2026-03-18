@@ -16,6 +16,7 @@ Versions follow [Semantic Versioning](https://semver.org).
 ### Miscellaneous
 
 - Chore: update CHANGELOG.md for v1.1.0 ([`8f97274`](8f972746a35a3d2a675579efe851ae66b042903a))
+- Chore: update CHANGELOG.md for v1.1.0 ([`88df41c`](88df41cad6cbf3adcadfc53174e13bb012f6f2c8))
 
 ### Other
 
@@ -33,6 +34,7 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Readme fixes ([`4ea13ee`](4ea13eeccd7c738dd57fb91ff83957ed4c526585))
 - Merge pull request #10 from FelixCpp/develop ([`82a493e`](82a493ecbed97dda159add365af3d7ccbfbe2ef5))
 - Merge pull request #11 from FelixCpp/develop ([`06a2d17`](06a2d17feab119b48f576ba76dd86991f4d60f3c))
+- Publishing... ([`00999e6`](00999e658f4669e93c56bb698b33431e4771471d))
 
 ## [1.0.0] - 2026-03-16
 
