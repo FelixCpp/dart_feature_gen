@@ -3,157 +3,126 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Release version (e.g. 1.0.0 or 1.0.0-beta.1)"
-        required: true
-        type: string
-      prerelease:
-        description: "Mark as pre-release?"
+      dry_run:
+        description: "Dry run (no actual publishing)"
         required: false
         default: false
         type: boolean
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
 
 jobs:
-  guard:
-    name: Check branch
+  # ─────────────────────────────────────────────────────────────
+  # Job 1: Triggered manually → validate, update CHANGELOG, push tag
+  # Uses a PAT so the tag push re-triggers this workflow's publish job
+  # ─────────────────────────────────────────────────────────────
+  prepare:
+    name: Prepare Release
     runs-on: ubuntu-latest
-    steps:
-      - name: Ensure release runs on main
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo "❌ Releases can only be created from main (current: ${{ github.ref }})"
-          exit 1
+    if: github.event_name == 'workflow_dispatch'
 
-  # ─────────────────────────────────────────────
-  # 1. Publish Dry Run
-  # ─────────────────────────────────────────────
-  publish-dry-run:
-    name: Publish Dry Run
-    needs: guard
-    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # PAT instead of GITHUB_TOKEN so the tag push triggers the publish job
+          token: ${{ secrets.RELEASE_PAT }}
 
-      - uses: dart-lang/setup-dart@v1
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
       - name: Install dependencies
         run: dart pub get
 
+      - name: Extract version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: *//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check tag does not exist yet
+        if: ${{ !inputs.dry_run }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "❌ Tag $TAG already exists! Please bump the version in pubspec.yaml."
+            exit 1
+          fi
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        run: dart analyze --fatal-infos
+
+      - name: Run tests
+        run: dart test
+
       - name: Publish dry run
+        if: ${{ inputs.dry_run }}
         run: dart pub publish --dry-run
 
-  # ─────────────────────────────────────────────
-  # 2. Release
-  # ─────────────────────────────────────────────
-  release:
-    name: Create Release
-    needs: publish-dry-run
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
-    outputs:
-      tag: ${{ steps.tag.outputs.tag }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.RELEASE_PAT }}
-
-      - name: Validate version format
-        run: |
-          VERSION="${{ github.event.inputs.version }}"
-          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
-            echo "❌ Invalid version format: '$VERSION'. Expected: 1.0.0 or 1.0.0-beta.1"
-            exit 1
-          fi
-          echo "✅ Version format valid: $VERSION"
-
-      - name: Check version is higher than latest tag
-        run: |
-          VERSION="${{ github.event.inputs.version }}"
-          LATEST=$(git tag --sort=-v:refname | grep -E '^v[0-9]' | head -n1 | sed 's/^v//')
-          if [ -z "$LATEST" ]; then
-            echo "No previous tags found, skipping version check."
-            exit 0
-          fi
-          HIGHER=$(printf '%s\n%s' "$LATEST" "$VERSION" | sort -V | tail -n1)
-          if [ "$HIGHER" != "$VERSION" ]; then
-            echo "❌ Version $VERSION is not higher than latest tag v$LATEST"
-            exit 1
-          fi
-          echo "✅ Version $VERSION is higher than v$LATEST"
-
-      - uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-
-      - name: Update version in pubspec.yaml
-        run: |
-          VERSION="${{ github.event.inputs.version }}"
-          sed -i "s/^version: .*/version: $VERSION/" pubspec.yaml
-          echo "Updated pubspec.yaml → version: $VERSION"
-
       - name: Install git-cliff
-        uses: kenji-miyake/setup-git-cliff@v2
+        if: ${{ !inputs.dry_run }}
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff
 
-      - name: Generate changelog
-        id: changelog
+      - name: Update CHANGELOG.md (if needed)
+        if: ${{ !inputs.dry_run }}
         run: |
-          git cliff --config cliff.toml --tag v${{ github.event.inputs.version }} --output CHANGELOG.md
-          {
-            echo "content<<CLIFF_EOF"
-            git cliff --config cliff.toml --tag v${{ github.event.inputs.version }} --latest
-            echo "CLIFF_EOF"
-          } >> "$GITHUB_OUTPUT"
+          git-cliff --tag ${{ steps.version.outputs.tag }} -o CHANGELOG.md
+          if git diff --quiet CHANGELOG.md; then
+            echo "✅ CHANGELOG.md is already up to date, nothing to do."
+          else
+            echo "📝 CHANGELOG.md was updated, committing changes..."
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add CHANGELOG.md
+            git commit -m "chore: update CHANGELOG.md for ${{ steps.version.outputs.tag }}"
+            git push
+          fi
 
-      - name: Commit version bump & changelog
-        id: tag
+      - name: Create and push tag
+        if: ${{ !inputs.dry_run }}
         run: |
-          VERSION="${{ github.event.inputs.version }}"
-          TAG="v$VERSION"
-
+          TAG="${{ steps.version.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git add pubspec.yaml CHANGELOG.md
-          git commit -m "chore(release): $TAG"
-
           git tag "$TAG"
-          git push origin main --follow-tags
+          git push origin "$TAG"
+          # PAT ensures GitHub treats this push as an external trigger
+          # so the publish job below is fired
 
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: ${{ steps.tag.outputs.tag }}
-          body: ${{ steps.changelog.outputs.content }}
-          prerelease: ${{ github.event.inputs.prerelease }}
-
-  # ─────────────────────────────────────────────
-  # 3. Publish to pub.dev
-  # ─────────────────────────────────────────────
+  # ─────────────────────────────────────────────────────────────
+  # Job 2: Runs only when a version tag is pushed
+  # GITHUB_REF is a tag ref → pub.dev OIDC authentication succeeds
+  # ─────────────────────────────────────────────────────────────
   publish:
-    name: Publish to pub.dev
-    needs: release
+    name: Publish & Release
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
 
     permissions:
-      id-token: write
+      id-token: write # required for pub.dev OIDC
+      contents: write # required for creating a GitHub Release
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release.outputs.tag }}
+          fetch-depth: 0
 
-      - uses: dart-lang/setup-dart@v1
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
@@ -162,3 +131,25 @@ jobs:
 
       - name: Publish to pub.dev
         run: dart pub publish --force
+
+      - name: Install git-cliff
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff
+
+      - name: Generate release notes
+        id: changelog
+        run: |
+          NOTES=$(git-cliff --tag ${{ github.ref_name }} --unreleased --strip all)
+          {
+            echo "notes<<EOF"
+            echo "$NOTES"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.notes }}

@@ -3,12 +3,20 @@
 All notable changes to this project will be documented in this file.
 Versions follow [Semantic Versioning](https://semver.org).
 
-## [1.1.0] - 2026-03-17
+## [1.1.0] - 2026-03-18
 
 ### Bug Fixes
 
 - Fixed path creation ([`4676356`](467635688a78735e154432c5a14f131681d31361))
 - Fixed changelog before released ([`efb93a1`](efb93a10831cbea09e4efa357be8cb3f10d07d03))
+- Fix lcov coverage ([`189899b`](189899bec9b35ea87bbcb44b5ad4507859d9eccc))
+- Fixed publishing step ([`a182289`](a1822899a506a3cb2d2c65331769eefae5ebbb26))
+- Fixed publishing step ([`810493f`](810493fe008c151e58af934ca4837404cf2c14d9))
+
+### Miscellaneous
+
+- Chore: update CHANGELOG.md for v1.1.0 ([`8f97274`](8f972746a35a3d2a675579efe851ae66b042903a))
+- Chore: update CHANGELOG.md for v1.1.0 ([`88df41c`](88df41cad6cbf3adcadfc53174e13bb012f6f2c8))
 
 ### Other
 
@@ -25,6 +33,8 @@ Versions follow [Semantic Versioning](https://semver.org).
 - Changelog fix ([`1a52403`](1a52403045707cd447f70c66d79727e7e31e0513))
 - Readme fixes ([`4ea13ee`](4ea13eeccd7c738dd57fb91ff83957ed4c526585))
 - Merge pull request #10 from FelixCpp/develop ([`82a493e`](82a493ecbed97dda159add365af3d7ccbfbe2ef5))
+- Merge pull request #11 from FelixCpp/develop ([`06a2d17`](06a2d17feab119b48f576ba76dd86991f4d60f3c))
+- Publishing... ([`00999e6`](00999e658f4669e93c56bb698b33431e4771471d))
 
 ## [1.0.0] - 2026-03-16
 
