@@ -1,34 +1,110 @@
 # dart_feature_gen
 
-A Dart CLI tool that generates clean, consistent feature structures for Flutter apps following clean architecture principles.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Generated Structure](#generated-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Configuration](#configuration)
-- [Options & Flags](#options--flags)
-- [How It Works](#how-it-works)
-- [Development](#development)
-- [Requirements](#requirements)
+[![pub package](https://img.shields.io/pub/v/dart_feature_gen.svg)](https://pub.dev/packages/dart_feature_gen)
+[![codecov](https://codecov.io/gh/FelixCpp/dart_feature_gen/branch/main/graph/badge.svg)](https://codecov.io/gh/FelixCpp/dart_feature_gen)
+[![CI](https://github.com/FelixCpp/dart_feature_gen/actions/workflows/pipeline.yml/badge.svg)](https://github.com/FelixCpp/dart_feature_gen/actions/workflows/pipeline.yml)
 
 ---
 
 ## Overview
 
-In larger Flutter projects, every feature tends to follow the same folder structure: a `data` layer, a `domain` layer, and a `presentation` layer. Creating this by hand is really repetitive.
+`dart_feature_gen` is a powerful CLI tool for Flutter projects, automating the creation of feature folders and boilerplate code following clean architecture. Save time, reduce errors, and keep your codebase consistent.
 
-`dart_feature_gen` automates this entirely. One command creates the full directory tree, populates every file with the correct boilerplate.
+---
+
+## Features
+
+- Generates complete feature structure (`data`, `domain`, `presentation`) in seconds
+- Supports multiple state management libraries: Bloc, Cubit, Riverpod
+- Customizable output directory and feature prefix
+- Pre-populated Dart files with correct class names and imports
+- Runs `dart format` and optionally `build_runner` for code generation
+- Easily configurable via CLI flags or `dart_feature_gen.yaml`
+
+---
+
+## Getting Started
+
+### Installation
+
+#### From pub.dev (recommended)
+
+```bash
+dart pub global activate dart_feature_gen
+```
+
+#### From source
+
+```bash
+git clone https://github.com/yourname/dart_feature_gen.git
+cd dart_feature_gen
+dart pub global activate --source path .
+```
+
+#### Run without installing
+
+```bash
+dart run bin/dart_feature_gen.dart generate --feature-name=auth
+```
+
+---
+
+## Usage
+
+### Basic Example
+
+```bash
+dart_feature_gen generate --feature-name=auth
+```
+
+### Custom Output Directory
+
+```bash
+dart_feature_gen generate --feature-name=auth --output-dir=lib/src/features
+```
+
+### Feature Prefix
+
+```bash
+dart_feature_gen generate --feature-name=auth --feature-prefix=feat --output-dir=lib/src/features
+```
+
+### Skip Code Generation
+
+```bash
+dart_feature_gen generate --feature-name=auth --no-code-generate
+```
+
+### Multi-word Feature Names
+
+Use `snake_case` for feature names. Class names are automatically converted to `PascalCase`.
+
+```bash
+dart_feature_gen generate user_profile
+# → UserProfileBloc, UserProfileRepository, etc.
+```
+
+---
+
+## Configuration
+
+Create a `dart_feature_gen.yaml` in your project root to set defaults:
+
+```yaml
+output-dir: lib/features
+feature-prefix: feat
+state-management: bloc
+code-format: true
+code-generate: true
+```
+
+CLI flags always override YAML config.
 
 ---
 
 ## Generated Structure
 
-Running `dart_feature_gen generate auth` inside your Flutter project root produces:
+Example for `auth` feature:
 
 ```
 lib/features/auth/
@@ -54,131 +130,29 @@ lib/features/auth/
     └── auth_screen.dart
 ```
 
-Each file is pre-populated with the correct class name (derived from the feature name), imports, and interface stubs — ready for you to fill in the business logic.
-
----
-
-## Installation
-
-### Option A: Global activation (recommended)
-
-```bash
-dart pub global activate dart_feature_gen
-```
-
-### Option B: From source
-
-```bash
-git clone https://github.com/yourname/dart_feature_gen.git
-cd dart_feature_gen
-dart pub global activate --source path .
-```
-
-### Option C: Run without installing
-
-```bash
-dart run bin/dart_feature_gen.dart generate --feature-name=auth
-```
-
----
-
-## Usage
-
-### Basic
-
-```bash
-# Generate a feature named "auth" under lib/features/
-dart_feature_gen generate --feature-name=auth
-```
-
-### Custom output directory
-
-```bash
-# Generate under a different directory
-dart_feature_gen generate --feature-name=auth --output-dir=lib/src/features
-```
-
-### Directory prefix
-
-```bash
-# Generate using a prefix. Output: lib/src/features/feat_auth/...
-dart_feature_gen generate --feature-name=auth --feature-prefix=feat --output-dir=lib/src/features
-```
-
-### Skip build_runner
-
-```bash
-# Only generate files and run dart format — skip build_runner
-dart_feature_gen generate --feature-name=auth --no-code-generate
-```
-
-### Multi-word feature names
-
-Use `snake_case` — class names are automatically converted to `PascalCase`:
-
-```bash
-dart_feature_gen generate user_profile
-# → UserProfileBloc, UserProfileRepository, etc.
-```
-
----
-
-## Configuration
-
-Place a `dart_feature_gen.yaml` file in your Flutter project root to set defaults:
-
-```yaml
-# dart_feature_gen.yaml
-
-# Base path for generated features (default: lib/features)
-output-dir: lib/features
-
-# Prefix that is being put in front of the requested feature name.
-# Output might be "feat_auth" in case the feature has been named "auth"
-# Note that the prefix is being put separated using a "_" character.
-feature-prefix: feat
-
-# State management library to use. Possible values are
-# bloc, cubit as well as riverpod.
-state-management: bloc
-
-# Run dart format after generation (default: true)
-code-format: true
-
-# Run build_runner after generation, if available (default: true)
-code-generate: true
-```
-
-CLI flags always take precedence over `dart_feature_gen.yaml` values.
-
 ---
 
 ## Options & Flags
 
-| Option / Flag | Short | Mandatory | Default | Description |
-|---|---|---|---|---|
-| --help | -h | | | Show usage information |
-| --feature-name | -n | yes | | Name of the feature |
-| --feature-prefix | -p | no | | Directory prefix separated by '_' |
-| --output-dir | -o | no | lib/features | Directory where the feature is being generated to |
-| --state-management | | no | bloc | Which state management library to use for the presentation layer |
-| --(no)-code-format | | no | true | Whether to run the code formatter (dart format) afterwards |
-| --(no)-code-generate | | no | true | Whether to run the code generator (build_runner) afterwards |
+| Option / Flag        | Short | Required | Default      | Description                                        |
+| -------------------- | ----- | -------- | ------------ | -------------------------------------------------- |
+| --help               | -h    |          |              | Show usage information                             |
+| --feature-name       | -n    | yes      |              | Name of the feature                                |
+| --feature-prefix     | -p    | no       |              | Directory prefix separated by '\_'                 |
+| --output-dir         | -o    | no       | lib/features | Directory for generated feature                    |
+| --state-management   |       | no       | bloc         | State management library for presentation layer    |
+| --(no)-code-format   |       | no       | true         | Run code formatter after generation                |
+| --(no)-code-generate |       | no       | true         | Run code generator (build_runner) after generation |
 
 ---
 
 ## How It Works
 
-1. **File generation** — Creates the full directory tree and writes boilerplate Dart files for the `data`, `domain`, and `presentation` layers.
+1. **File Generation**: Creates directory tree and boilerplate Dart files for `data`, `domain`, and `presentation` layers.
+2. **Formatting**: Runs `dart format` on the generated feature directory.
+3. **Code Generation**: If `build_runner` is a dependency, runs `dart run build_runner build --delete-conflicting-outputs`.
 
-2. **`dart format`** — Runs `dart format <feature_path>` scoped to the newly created feature directory.
-
-3. **`build_runner`** — If `build_runner` is listed as a dependency in your project's `pubspec.yaml`, it runs:
-   ```bash
-   dart run build_runner build --delete-conflicting-outputs
-   ```
-
-> **Note:** `build_runner is required to be listed as a (dev-)dependency inside your pubspec.yaml file.
+> **Note:** `build_runner` must be listed as a (dev-)dependency in your `pubspec.yaml`.
 
 ---
 
@@ -188,7 +162,7 @@ CLI flags always take precedence over `dart_feature_gen.yaml` values.
 
 - Dart SDK `>=3.0.0`
 
-### Running locally
+### Running Locally
 
 ```bash
 git clone https://github.com/yourname/dart_feature_gen.git
@@ -197,7 +171,7 @@ dart pub get
 dart run bin/dart_feature_gen.dart generate auth
 ```
 
-### Running tests
+### Running Tests
 
 ```bash
 dart test
@@ -205,20 +179,32 @@ dart test
 
 ### Dependencies
 
-| Package | Purpose |
-|---|---|
-| [`args`](https://pub.dev/packages/args) | CLI argument and flag parsing |
+| Package                                                 | Purpose                                             |
+| ------------------------------------------------------- | --------------------------------------------------- |
+| [`args`](https://pub.dev/packages/args)                 | CLI argument and flag parsing                       |
 | [`mason_logger`](https://pub.dev/packages/mason_logger) | Formatted terminal output with spinners and colours |
-| [`yaml`](https://pub.dev/packages/yaml) | Parsing `dart_feature_gen.yaml` and `pubspec.yaml` |
-| [`path`](https://pub.dev/packages/path) | Cross-platform path operations |
-| [`recase`](https://pub.dev/packages/recase) | Map between several coding styles |
+| [`yaml`](https://pub.dev/packages/yaml)                 | YAML parsing for config files                       |
+| [`path`](https://pub.dev/packages/path)                 | Cross-platform path operations                      |
+| [`recase`](https://pub.dev/packages/recase)             | Case conversion utilities                           |
 
 ---
 
 ## Requirements
 
-- **Dart SDK** `>=3.0.0`
-- **Dart/Flutter project** with a `pubspec.yaml` in the working directory
-- `build_runner` and `freezed` in your Flutter project's `dev_dependencies` (only required if you want the build step)
-- **flutter_bloc** in case you generate using bloc or cubit as state management
-- **flutter_riverpod**, **riverpod_annotation**, **riverpod_generator** in case you generate using riverpod as state management
+- Dart SDK `>=3.0.0`
+- Dart/Flutter project with a `pubspec.yaml`
+- `build_runner` and `freezed` in `dev_dependencies` (for code generation)
+- `flutter_bloc` for Bloc/Cubit state management
+- `flutter_riverpod`, `riverpod_annotation`, `riverpod_generator` for Riverpod state management
+
+---
+
+## License
+
+MIT
+
+---
+
+## Contributing
+
+Pull requests and issues are welcome! Please read the [contributing guidelines](CONTRIBUTING.md).
