@@ -13,9 +13,12 @@ void main() {
       final io = FeatureGenIO(fileSystem: fileSystem, logger: logger);
 
       final startingDirectory = await fileSystem
-          .directory('root/level1/level2')
+          .directory(path.join('root', 'level1', 'level2'))
           .create(recursive: true);
-      await fileSystem.file('root/pubspec.yaml').create(recursive: true);
+
+      await fileSystem
+          .file(path.join('root', 'pubspec.yaml'))
+          .create(recursive: true);
 
       final pubspecFile = await findNearestFile(
         io: io,
