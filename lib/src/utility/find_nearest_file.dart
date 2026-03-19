@@ -20,7 +20,7 @@ Future<File?> findNearestFile({
     }
 
     final parent = currentDirectory.parent;
-    if (currentDirectory == parent) {
+    if (currentDirectory.path == parent.path) {
       return null;
     }
 
