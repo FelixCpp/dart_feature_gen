@@ -60,15 +60,18 @@ jobs:
           # Falls du das brauchst, ersetze dies durch einen PAT:
           # token: ${{ secrets.PAT }}
 
-      - name: Generate changelog with git-cliff
-        uses: orhun/git-cliff-action@v4
+      # Ersetzt orhun/git-cliff-action um den OUTPUT/--prepend Konflikt zu vermeiden
+      - name: Install git-cliff
+        uses: taiki-e/install-action@v2
         with:
-          config: cliff.toml
-          args: --unreleased --tag "v${{ github.event.inputs.version }}" --prepend CHANGELOG.md
+          tool: git-cliff
+
+      - name: Generate changelog with git-cliff
+        run: git cliff --unreleased --tag "v${{ github.event.inputs.version }}" --prepend CHANGELOG.md
+        env:
           # --unreleased  → alle Commits seit dem letzten Tag
           # --tag         → git-cliff kennt den neuen Tag-Namen bereits für den Header
-        env:
-          # OUTPUT: CHANGELOG.md
+          # --prepend     → neuen Eintrag oben einfügen, Rest bleibt erhalten
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Commit & push CHANGELOG.md
@@ -87,15 +90,10 @@ jobs:
           git push origin "$VERSION"
 
       - name: Generate release notes (nur dieser Release, kein Header)
-        uses: orhun/git-cliff-action@v4
-        id: cliff
-        with:
-          config: cliff.toml
-          args: --latest --strip header
+        run: git cliff --latest --strip header > /tmp/release-notes.md
+        env:
           # --latest      → nur Commits dieses Releases
           # --strip header → kein Titel im Release-Body
-        env:
-          OUTPUT: /tmp/release-notes.md
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Create GitHub Release
@@ -120,6 +118,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: "v${{ github.event.inputs.version }}"
+          # Wichtig: Checkout des Tags, damit der aktuelle CHANGELOG.md
+          # (der im release-Job committet wurde) enthalten ist
 
       - uses: dart-lang/setup-dart@v1
         with:
