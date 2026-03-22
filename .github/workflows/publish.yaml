@@ -68,7 +68,7 @@ jobs:
           # --unreleased  → alle Commits seit dem letzten Tag
           # --tag         → git-cliff kennt den neuen Tag-Namen bereits für den Header
         env:
-          OUTPUT: CHANGELOG.md
+          # OUTPUT: CHANGELOG.md
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Commit & push CHANGELOG.md
