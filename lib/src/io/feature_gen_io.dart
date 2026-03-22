@@ -14,6 +14,22 @@ class FeatureGenIO {
     return fileSystem.currentDirectory.path;
   }
 
+  Directory getCwdDir() {
+    return fileSystem.currentDirectory;
+  }
+
+  File getFile(dynamic path) {
+    return fileSystem.file(path);
+  }
+
+  Directory getDirectory(dynamic path) {
+    return fileSystem.directory(path);
+  }
+
+  Future<bool> doesFileExist(dynamic path) {
+    return fileSystem.isFile(path);
+  }
+
   Future<void> createDirectory(String path) async {
     await fileSystem.directory(path).create(recursive: true);
     logger.success('Successfully create directory "$path"');

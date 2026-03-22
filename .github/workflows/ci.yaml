@@ -1,29 +1,28 @@
 name: CI
 
-# Runs on every push to any branch except main, and on pull requests targeting develop.
-# This covers: pushes to feature branches, pushes to develop (after merge), and
-# pull requests opened against develop.
 on:
   push:
-    branches-ignore:
-      - main
-    tags-ignore:
-      - '**'
+    branches: ["**"]
   pull_request:
-    branches:
-      - develop
+    branches: ["**"]
+
+# Verhindert parallele Runs auf demselben Branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  analyze_and_test:
-    name: Analyze & Test
+  # ─────────────────────────────────────────────
+  # 1. Statische Analyse & Format-Check
+  # ─────────────────────────────────────────────
+  analyze:
+    name: Analyze & Format
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
 
@@ -36,24 +35,69 @@ jobs:
       - name: Analyze
         run: dart analyze --fatal-infos
 
-      - name: Run tests
+  # ─────────────────────────────────────────────
+  # 2. Test-Matrix (Plattform × Dart-Kanal)
+  # ─────────────────────────────────────────────
+  test:
+    name: Test (${{ matrix.os }} · Dart ${{ matrix.sdk }})
+    needs: analyze
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false # Alle Plattformen durchlaufen, auch wenn eine scheitert
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk: ["stable", "beta"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Run tests with coverage
         run: dart test --coverage=coverage
 
-      - name: Install coverage tools
-        run: dart pub global activate coverage
-
-      - name: Convert coverage to LCOV
+      - name: Convert coverage to lcov
+        if: matrix.os == 'ubuntu-latest' && matrix.sdk == 'stable'
         run: |
+          dart pub global activate coverage
           dart pub global run coverage:format_coverage \
             --lcov \
             --in=coverage \
             --out=coverage/lcov.info \
-            --packages=.dart_tool/package_config.json \
             --report-on=lib
 
+      # Coverage nur einmal hochladen (ubuntu + stable reicht)
       - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.sdk == 'stable'
         uses: codecov/codecov-action@v4
         with:
           files: coverage/lcov.info
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }} # Optional für public repos, Pflicht für private
+
+  # ─────────────────────────────────────────────
+  # 3. pub.dev Score (pana) – nur informativ
+  # ─────────────────────────────────────────────
+  pana:
+    name: pub.dev Score (pana)
+    needs: analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install pana
+        run: dart pub global activate pana
+
+      - name: Run pana
+        run: pana --no-warning .

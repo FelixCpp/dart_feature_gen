@@ -1,22 +1,23 @@
+import 'package:dart_feature_gen/src/io/feature_gen_io.dart';
 import 'package:dart_feature_gen/src/yaml/yaml_feature_gen_config.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:yaml/yaml.dart';
 
-class YamlLoader {
-  const YamlLoader({required this.logger});
+class YamlConfigLoader {
+  const YamlConfigLoader({
+    required this.io,
+    required this.logger,
+  });
 
+  final FeatureGenIO io;
   final Logger logger;
 
-  Future<YamlFeatureGenConfig> run(String yamlSource) async {
-    Map<dynamic, dynamic> yaml;
+  Future<YamlFeatureGenConfig> loadConfigFromSource(String source) async {
+    var yaml = {};
     try {
-      yaml = loadYaml(yamlSource) as Map;
-      logger.success('Yaml file has been read successfully.');
+      yaml = loadYaml(source) as Map? ?? {};
     } catch (exception) {
-      logger.success(
-        'Failed to read valid feature configuration. Using fallback',
-      );
-      yaml = {};
+      logger.err('Failed to decode configuration file (yaml): $exception');
     }
 
     return YamlFeatureGenConfig(

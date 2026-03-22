@@ -3,9 +3,10 @@ import 'package:dart_feature_gen/src/config_parser.dart';
 import 'package:dart_feature_gen/src/feature_gen_config.dart';
 import 'package:dart_feature_gen/src/io/feature_gen_io.dart';
 import 'package:dart_feature_gen/src/yaml/yaml_feature_gen_config.dart';
-import 'package:file/memory.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:test/test.dart';
+
+import 'memory_file_system.dart';
 
 void main() {
   group('merges yaml into cli', () {
@@ -13,14 +14,13 @@ void main() {
 
     setUp(() {
       io = FeatureGenIO(
-        fileSystem: MemoryFileSystem.test(),
+        fileSystem: getTestFileSystem(),
         logger: Logger(level: Level.quiet),
       );
     });
 
     test('should apply default values to non-parsed configs', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -36,6 +36,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -48,7 +49,6 @@ void main() {
 
     test('should merge feature prefix from yaml into cli', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -64,6 +64,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -76,7 +77,6 @@ void main() {
 
     test('should merge output directory from yaml into cli', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -92,6 +92,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -104,7 +105,6 @@ void main() {
 
     test('should merge state management from yaml into cli', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -120,6 +120,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -132,7 +133,6 @@ void main() {
 
     test('should merge run code formatter from yaml into cli', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -148,6 +148,7 @@ void main() {
           runCodeFormatter: false,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -160,7 +161,6 @@ void main() {
 
     test('should merge run code generator from yaml into cli', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -176,6 +176,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: false,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -192,14 +193,13 @@ void main() {
 
     setUp(() {
       io = FeatureGenIO(
-        fileSystem: MemoryFileSystem.test(),
+        fileSystem: getTestFileSystem(),
         logger: Logger(level: Level.quiet),
       );
     });
 
     test('takes feature prefix from cli instead of yaml', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: 'cli_feat',
@@ -215,6 +215,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -227,7 +228,6 @@ void main() {
 
     test('takes output dir from cli instead of yaml', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -243,6 +243,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -255,7 +256,6 @@ void main() {
 
     test('takes state management from cli instead of yaml', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -271,6 +271,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -283,7 +284,6 @@ void main() {
 
     test('takes run code formatter from cli instead of yaml', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -299,6 +299,7 @@ void main() {
           runCodeFormatter: true,
           runCodeGenerator: null,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
@@ -311,7 +312,6 @@ void main() {
 
     test('takes run code generator from cli instead of yaml', () {
       final config = mergeConfigs(
-        io: io,
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
@@ -327,6 +327,7 @@ void main() {
           runCodeFormatter: null,
           runCodeGenerator: true,
         ),
+        rootDirectoryPath: io.getCwd(),
       );
 
       expect(config.featureName, equals('auth'));
