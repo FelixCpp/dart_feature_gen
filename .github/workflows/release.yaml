@@ -61,6 +61,7 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: git-cliff
+          token: ${{ secrets.RELEASE_PAT }}
 
       - name: Generate changelog with git-cliff
         run: git cliff --unreleased --tag "v${{ github.event.inputs.version }}" --prepend CHANGELOG.md
