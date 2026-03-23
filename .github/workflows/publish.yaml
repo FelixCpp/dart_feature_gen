@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*" # Wird durch release.yml getriggert wenn der Tag gepusht wird
+  workflow_dispatch:
 
 jobs:
   # ─────────────────────────────────────────────
