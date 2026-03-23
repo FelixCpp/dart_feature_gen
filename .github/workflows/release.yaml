@@ -123,20 +123,14 @@ jobs:
       - name: Run tests
         run: dart test
 
-      # ── 7. pub.dev dry-run (validates package structure) ──────
-      - name: dart pub publish --dry-run
-        run: dart pub publish --dry-run
-
-      # ── 8. Commit & push (pubspec + CHANGELOG) ────────────────
-      #    [skip ci] prevents the CI workflow from triggering again.
-      #    The tag points to THIS commit so pub.dev sees the correct
-      #    CHANGELOG – fixing the "CHANGELOG does not contain version"
-      #    error that would occur if we published from a stale tree.
+      # ── 7. Commit & push (pubspec + CHANGELOG) ────────────────
+      #    Must happen BEFORE --dry-run: dart pub publish checks
+      #    `git status` and fails when tracked files are modified.
+      #    [skip ci] prevents the CI workflow from re-triggering.
       - name: Commit release changes
         if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
           git add pubspec.yaml CHANGELOG.md
-          # Only commit if something actually changed
           if git diff --cached --quiet; then
             echo "Nothing to commit – pubspec and CHANGELOG were already up to date."
           else
@@ -150,6 +144,12 @@ jobs:
             -m "Release ${{ steps.validate.outputs.tag }}"
           git push origin HEAD
           git push origin "${{ steps.validate.outputs.tag }}"
+
+      # ── 8. Validate package (tree is now clean after commit) ──
+      #    pubspec.yaml and CHANGELOG.md are committed → git status
+      #    is clean → dry-run passes without "modified files" warning.
+      - name: dart pub publish --dry-run
+        run: dart pub publish --dry-run
 
       # ── 9. Dry-run summary ────────────────────────────────────
       - name: Dry-run summary
