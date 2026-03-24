@@ -33,6 +33,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.RELEASE_PAT }}
+          persist-credentials: false
 
       # ── 2. Tooling ────────────────────────────────────────────
       - name: Setup Dart SDK
@@ -125,14 +126,18 @@ jobs:
 
       - name: Create & push Git tag
         if: ${{ github.event.inputs.dry_run == 'false' }}
+        env:
+          PAT: ${{ secrets.RELEASE_PAT }}
         run: |
           git tag "${{ steps.validate.outputs.tag }}" \
             -m "Release ${{ steps.validate.outputs.tag }}"
+          # Push via PAT-authenticated remote URL so GitHub recognises the
+          # push as coming from a real user (not the Actions bot).
+          # persist-credentials: false above ensures GITHUB_TOKEN is NOT
+          # used implicitly – which would silently block downstream triggers.
+          git remote set-url origin "https://x-access-token:${PAT}@github.com/${{ github.repository }}.git"
           git push origin HEAD
           git push origin "${{ steps.validate.outputs.tag }}"
-          # Pushing this tag automatically triggers publish.yml via
-          # `on: push: tags: ['v*.*.*']` – which receives refType: tag
-          # in its OIDC token, satisfying pub.dev's publishing policy.
 
       # ── 8. pub.dev dry-run (tree is clean after commit) ───────
       - name: dart pub publish --dry-run
