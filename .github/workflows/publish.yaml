@@ -29,17 +29,11 @@
 name: Publish to pub.dev
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag to publish (must already exist, e.g. v1.2.3)"
-        required: true
-        type: string
-      min_pub_score:
-        description: "Minimum pana score to allow publishing (0–160, default 120)"
-        required: false
-        default: "120"
-        type: string
+  release:
+    types: [released]
+  push:
+    tags:
+      - "*"
 
 jobs:
   # ── Guard: validate tag & score ───────────────────────────────────────────
@@ -139,7 +133,7 @@ jobs:
 
   # ── Publish to pub.dev via OIDC ───────────────────────────────────────────
   publish:
-    name: Publish to pub.dev
+    name: Publish
     needs: validate
 
     permissions:
