@@ -127,15 +127,15 @@ jobs:
       - name: Create & push Git tag
         if: ${{ github.event.inputs.dry_run == 'false' }}
         env:
-          PAT: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
           git tag "${{ steps.validate.outputs.tag }}" \
             -m "Release ${{ steps.validate.outputs.tag }}"
-          # Push via PAT-authenticated remote URL so GitHub recognises the
-          # push as coming from a real user (not the Actions bot).
-          # persist-credentials: false above ensures GITHUB_TOKEN is NOT
-          # used implicitly – which would silently block downstream triggers.
-          git remote set-url origin "https://x-access-token:${PAT}@github.com/${{ github.repository }}.git"
+          # Use `gh` CLI for pushing: it authenticates via GH_TOKEN (the PAT)
+          # at the API level, bypassing the git credential helper that
+          # actions/checkout installs (which uses GITHUB_TOKEN and would
+          # silently prevent downstream on:push:tags triggers from firing).
+          gh auth setup-git
           git push origin HEAD
           git push origin "${{ steps.validate.outputs.tag }}"
 

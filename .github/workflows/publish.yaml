@@ -1,67 +1,48 @@
 name: Publish
 
-# Triggered when the "Release" workflow completes successfully.
-# Using workflow_run instead of push:tags is more reliable because
-# a tag pushed by a workflow (even with a PAT) can sometimes fail to
-# fire push:tags in a downstream workflow due to GitHub's bot-push rules.
+# pub.dev OIDC requires refType=tag in the OIDC token.
+# This is ONLY set when a workflow is triggered by `push: tags` directly –
+# not by workflow_run, workflow_dispatch, or any other trigger.
+# Therefore this file must be triggered by a tag push, not called from release.yml.
 #
-# IMPORTANT: pub.dev OIDC requires refType=tag in the token.
-# workflow_run does NOT provide this automatically – so we pass the tag
-# explicitly to `dart pub publish` via PUB_TOKEN is NOT needed because
-# dart-lang/setup-dart exchanges the OIDC token. However, to satisfy
-# pub.dev's refType requirement we must trigger on the tag ref directly.
-#
-# Solution: workflow_run fires the job, but we checkout the tag ref
-# AND use the GitHub API to trigger a repository_dispatch as a bridge
-# – OR, simpler: we keep push:tags AND fix the upstream push to use
-# the PAT explicitly (persist-credentials:false + remote set-url).
-# With that fix in release.yml, push:tags reliably fires here.
+# The tag is pushed by release.yml using the RELEASE_PAT with
+# persist-credentials:false + explicit remote URL, which causes GitHub to
+# treat the push as a real user push and fire this trigger.
 on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
-permissions:
-  contents: write # Create GitHub Release
-  id-token: write # OIDC token for pub.dev (refType=tag from push trigger)
-
 jobs:
   publish:
-    name: Publish to pub.dev & Create GitHub Release
+    permissions:
+      id-token: write # Required for OIDC authentication with pub.dev
+      contents: write # Required to create GitHub Release
+
+    # Use the official dart-lang reusable publish workflow.
+    # pub.dev explicitly supports and recognizes this workflow.
+    # It handles OIDC token exchange with pub.dev automatically.
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+
+  release:
+    name: Create GitHub Release
     runs-on: ubuntu-latest
+    needs: publish
+    permissions:
+      contents: write
 
     steps:
-      # ── 1. Checkout the exact tagged commit ───────────────────
-      - name: Checkout ${{ github.ref_name }}
+      - name: Checkout tag
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
-
-      # ── 2. Tooling ────────────────────────────────────────────
-      - name: Setup Dart SDK
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
 
       - name: Install git-cliff
         uses: taiki-e/install-action@v2
         with:
           tool: git-cliff
 
-      # ── 3. Install dependencies ───────────────────────────────
-      - name: Install dependencies
-        run: dart pub get
-
-      # ── 4. Publish to pub.dev via OIDC ────────────────────────
-      #    This workflow is triggered by push:tags, so GitHub sets
-      #    refType=tag in the OIDC token – satisfying pub.dev's policy.
-      #    dart-lang/setup-dart exchanges the token automatically.
-      #    No PUB_TOKEN secret required.
-      - name: Publish to pub.dev
-        run: dart pub publish --force
-
-      # ── 5. Extract release notes for this tag ─────────────────
       - name: Extract release notes
         id: release_notes
         run: |
@@ -73,7 +54,6 @@ jobs:
           echo "$NOTES"     >> "$GITHUB_OUTPUT"
           echo "EOF"        >> "$GITHUB_OUTPUT"
 
-      # ── 6. Create GitHub Release ──────────────────────────────
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
