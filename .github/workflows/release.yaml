@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_PAT || github.token }}
+          token: ${{ secrets.RELEASE_PAT }}
 
       # ── Git identity ──────────────────────────────────────────────────────
       - name: Configure git identity
@@ -141,6 +141,8 @@ jobs:
           git tag "$TAG"
           git push origin "$TAG"
           echo "✅ Tag $TAG created and pushed."
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
 
       # ── Extract release notes for this version ────────────────────────────
       - name: Extract release notes
@@ -165,4 +167,4 @@ jobs:
           draft: false
           prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
