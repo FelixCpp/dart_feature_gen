@@ -31,9 +31,9 @@ name: Publish to pub.dev
 on:
   release:
     types: [released]
-  push:
-    tags:
-      - "*"
+  # push:
+  #   tags:
+  #     - "*"
 
 jobs:
   # ── Guard: validate tag & score ───────────────────────────────────────────

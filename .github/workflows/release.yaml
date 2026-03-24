@@ -141,8 +141,6 @@ jobs:
           git tag "$TAG"
           git push origin "$TAG"
           echo "✅ Tag $TAG created and pushed."
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
 
       # ── Extract release notes for this version ────────────────────────────
       - name: Extract release notes
@@ -166,5 +164,4 @@ jobs:
           body: ${{ steps.notes.outputs.body }}
           draft: false
           prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+          token: ${{ secrets.RELEASE_PAT }}
