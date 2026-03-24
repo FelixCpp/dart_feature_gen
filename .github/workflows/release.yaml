@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # git-cliff needs full history
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.RELEASE_PAT }}
 
       # ── Configure git identity ────────────────────────────────────────────
       - name: Configure git identity
@@ -176,4 +176,4 @@ jobs:
           draft: false
           prerelease: ${{ contains(steps.validate.outputs.version, '-') }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
