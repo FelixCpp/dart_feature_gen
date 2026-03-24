@@ -46,8 +46,13 @@ jobs:
         run: dart test --coverage=coverage
 
       # ── Convert to lcov ───────────────────────────────────────────────────
+      # We activate the coverage package globally so it does not need to be
+      # listed as a direct dependency in pubspec.yaml.
+      - name: Activate coverage tool
+        run: dart pub global activate coverage
+
       - name: Convert coverage to lcov
-        run: dart pub run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+        run: dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
       # ── Upload to Codecov ─────────────────────────────────────────────────
       - name: Upload coverage to Codecov
