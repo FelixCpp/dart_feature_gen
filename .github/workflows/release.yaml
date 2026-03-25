@@ -10,11 +10,23 @@ on:
 jobs:
   publish:
     name: Publish to pub.dev
-    # Der reusable workflow aus dart-lang/setup-dart übernimmt das komplette
-    # OIDC-Handshake mit pub.dev – dies ist die offizielle Empfehlung von dart.dev.
+    runs-on: ubuntu-latest
     permissions:
       id-token: write # Erforderlich für OIDC-Authentifizierung gegenüber pub.dev
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
+    steps:
+      - uses: actions/checkout@v4
+
+      # setup-dart konfiguriert den OIDC-Token für pub.dev – dart pub publish
+      # greift diesen automatisch ab. Kein Flutter-Download, da reines Dart-Paket.
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Publish to pub.dev
+        run: dart pub publish --force
 
   github-release:
     name: Create GitHub Release
