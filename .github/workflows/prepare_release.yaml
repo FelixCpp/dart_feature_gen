@@ -93,7 +93,7 @@ jobs:
         uses: kenji-miyake/setup-git-cliff@v2
 
       - name: Generate CHANGELOG.md
-        run: git cliff --output CHANGELOG.md
+        run: git cliff --tag "v${{ inputs.version }}" --output CHANGELOG.md
 
       - name: Commit CHANGELOG.md
         run: |
@@ -123,7 +123,6 @@ jobs:
       - name: Create and push tag
         run: |
           TAG="v${{ inputs.version }}"
-          # git pull origin main
           git remote set-url origin "https://x-access-token:${{ secrets.RELEASE_PAT }}@github.com/${{ github.repository }}.git"
           git tag "$TAG" -m "Release $TAG"
           git push origin "$TAG"
