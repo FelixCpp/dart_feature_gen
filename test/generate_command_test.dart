@@ -36,8 +36,9 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
-      expect(config?.runCodeFormatter, null);
-      expect(config?.runCodeGenerator, null);
+      expect(config?.dataClassFormat, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
     });
 
     test('should create config with prefix', () async {
@@ -52,10 +53,11 @@ void main() {
       expect(config, isNotNull);
       expect(config?.featureName, equals('auth'));
       expect(config?.featurePrefix, equals('feat'));
-      expect(config?.outputDir, null);
-      expect(config?.stateManagement, null);
-      expect(config?.runCodeFormatter, null);
-      expect(config?.runCodeGenerator, null);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
     });
 
     test('should create config with output-dir', () async {
@@ -72,8 +74,9 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, equals('my_features'));
       expect(config?.stateManagement, isNull);
-      expect(config?.runCodeFormatter, null);
-      expect(config?.runCodeGenerator, null);
+      expect(config?.dataClassFormat, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
     });
 
     test('should create config with state-management bloc', () async {
@@ -90,8 +93,9 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, equals('bloc'));
-      expect(config?.runCodeFormatter, null);
-      expect(config?.runCodeGenerator, null);
+      expect(config?.dataClassFormat, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
     });
 
     test('should create config with state-management cubit', () async {
@@ -108,8 +112,47 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, equals('cubit'));
-      expect(config?.runCodeFormatter, null);
-      expect(config?.runCodeGenerator, null);
+      expect(config?.dataClassFormat, isNull);
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
+    });
+
+    test('should create config with data-class-format freezed', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--data-class-format',
+        'freezed',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, equals('freezed'));
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
+    });
+
+    test('should create config with data-class-format sealed_unions', () async {
+      final config = await runner.run([
+        'generate',
+        '--feature-name',
+        'auth',
+        '--data-class-format',
+        'sealed_unions',
+      ]);
+
+      expect(config, isNotNull);
+      expect(config?.featureName, equals('auth'));
+      expect(config?.featurePrefix, isNull);
+      expect(config?.outputDir, isNull);
+      expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, equals('sealed_unions'));
+      expect(config?.runCodeFormatter, isNull);
+      expect(config?.runCodeGenerator, isNull);
     });
 
     test('should create config with code formatter turned on', () async {
@@ -125,6 +168,7 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, isNull);
       expect(config?.runCodeFormatter, isTrue);
       expect(config?.runCodeGenerator, isNull);
     });
@@ -142,6 +186,7 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, isNull);
       expect(config?.runCodeFormatter, isFalse);
       expect(config?.runCodeGenerator, isNull);
     });
@@ -159,6 +204,7 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, isNull);
       expect(config?.runCodeFormatter, isNull);
       expect(config?.runCodeGenerator, isTrue);
     });
@@ -176,6 +222,7 @@ void main() {
       expect(config?.featurePrefix, isNull);
       expect(config?.outputDir, isNull);
       expect(config?.stateManagement, isNull);
+      expect(config?.dataClassFormat, isNull);
       expect(config?.runCodeFormatter, isNull);
       expect(config?.runCodeGenerator, isFalse);
     });

@@ -24,6 +24,8 @@ void main() {
       expect(config.featurePrefix, isNull);
       expect(config.outputDir, isNull);
       expect(config.stateManagement, isNull);
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
     });
 
     test('should parse feature prefix', () async {
@@ -34,6 +36,8 @@ void main() {
       expect(config.featurePrefix, equals('feat'));
       expect(config.outputDir, isNull);
       expect(config.stateManagement, isNull);
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
     });
 
     test('should parse output directory', () async {
@@ -44,6 +48,8 @@ void main() {
       expect(config.featurePrefix, isNull);
       expect(config.outputDir, endsWith('libs/features'));
       expect(config.stateManagement, isNull);
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
     });
 
     test('should parse state management bloc', () async {
@@ -54,6 +60,8 @@ void main() {
       expect(config.featurePrefix, isNull);
       expect(config.outputDir, isNull);
       expect(config.stateManagement, equals('bloc'));
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
     });
 
     test('should parse state management cubit', () async {
@@ -64,6 +72,60 @@ void main() {
       expect(config.featurePrefix, isNull);
       expect(config.outputDir, isNull);
       expect(config.stateManagement, equals('cubit'));
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
+    });
+
+    test('should parse data class format freezed', () async {
+      final config = await yamlLoader.loadConfigFromSource('''
+        data-class-format: freezed
+      ''');
+
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDir, isNull);
+      expect(config.stateManagement, isNull);
+      expect(config.dataClassFormat, equals('freezed'));
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
+    });
+
+    test('should parse data class format sealed-union', () async {
+      final config = await yamlLoader.loadConfigFromSource('''
+        data-class-format: sealed_unions
+      ''');
+
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDir, isNull);
+      expect(config.stateManagement, isNull);
+      expect(config.dataClassFormat, equals('sealed_unions'));
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isNull);
+    });
+
+    test('should parse code format flag', () async {
+      final config = await yamlLoader.loadConfigFromSource('''
+        code-format: false
+      ''');
+
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDir, isNull);
+      expect(config.stateManagement, isNull);
+      expect(config.dataClassFormat, isNull);
+      expect(config.runCodeFormatter, isFalse);
+      expect(config.runCodeGenerator, isNull);
+    });
+
+    test('should parse code generate flag', () async {
+      final config = await yamlLoader.loadConfigFromSource('''
+        code-generate: false
+      ''');
+
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDir, isNull);
+      expect(config.stateManagement, isNull);
+      expect(config.dataClassFormat, isNull);
+      expect(config.runCodeFormatter, isNull);
+      expect(config.runCodeGenerator, isFalse);
     });
   });
 }
