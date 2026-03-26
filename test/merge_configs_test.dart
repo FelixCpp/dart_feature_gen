@@ -26,6 +26,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -33,6 +34,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -54,6 +56,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -61,6 +64,7 @@ void main() {
           featurePrefix: 'feat',
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -82,6 +86,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -89,6 +94,7 @@ void main() {
           featurePrefix: null,
           outputDir: 'my_features',
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -110,6 +116,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -117,6 +124,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: 'cubit',
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -131,13 +139,14 @@ void main() {
       expect(config.runCodeGenerator, isTrue);
     });
 
-    test('should merge run code formatter from yaml into cli', () {
+    test('should merge data-class-format from yaml into cli', () {
       final config = mergeConfigs(
         cli: CliFeatureGenConfig(
           featureName: 'auth',
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -145,6 +154,38 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: 'freezed',
+          runCodeFormatter: null,
+          runCodeGenerator: null,
+        ),
+        rootDirectoryPath: io.getCwd(),
+      );
+
+      expect(config.featureName, equals('auth'));
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDirectory, endsWith('lib/features'));
+      expect(config.stateManagement, equals(StateManagement.bloc));
+      expect(config.dataClassFormat, equals(DataClassFormat.freezed));
+      expect(config.runCodeFormatter, isTrue);
+      expect(config.runCodeGenerator, isTrue);
+    });
+
+    test('should merge run code formatter from yaml into cli', () {
+      final config = mergeConfigs(
+        cli: CliFeatureGenConfig(
+          featureName: 'auth',
+          featurePrefix: null,
+          outputDir: null,
+          stateManagement: null,
+          dataClassFormat: null,
+          runCodeFormatter: null,
+          runCodeGenerator: null,
+        ),
+        yaml: YamlFeatureGenConfig(
+          featurePrefix: null,
+          outputDir: null,
+          stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: false,
           runCodeGenerator: null,
         ),
@@ -166,6 +207,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -173,6 +215,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: false,
         ),
@@ -205,6 +248,7 @@ void main() {
           featurePrefix: 'cli_feat',
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -212,6 +256,7 @@ void main() {
           featurePrefix: 'yaml_feat',
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -233,6 +278,7 @@ void main() {
           featurePrefix: null,
           outputDir: 'cli_output',
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -240,6 +286,7 @@ void main() {
           featurePrefix: null,
           outputDir: 'yaml_output',
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -261,6 +308,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: 'cubit',
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -268,6 +316,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: 'bloc',
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: null,
         ),
@@ -282,6 +331,37 @@ void main() {
       expect(config.runCodeGenerator, isTrue);
     });
 
+    test('takes data-class-format from cli instead of yaml', () {
+      final config = mergeConfigs(
+        cli: CliFeatureGenConfig(
+          featureName: 'auth',
+          featurePrefix: null,
+          outputDir: null,
+          stateManagement: null,
+          dataClassFormat: 'freezed',
+          runCodeFormatter: null,
+          runCodeGenerator: null,
+        ),
+        yaml: YamlFeatureGenConfig(
+          featurePrefix: null,
+          outputDir: null,
+          stateManagement: null,
+          dataClassFormat: 'sealed_unions',
+          runCodeFormatter: null,
+          runCodeGenerator: null,
+        ),
+        rootDirectoryPath: io.getCwd(),
+      );
+
+      expect(config.featureName, equals('auth'));
+      expect(config.featurePrefix, isNull);
+      expect(config.outputDirectory, endsWith('lib/features'));
+      expect(config.stateManagement, equals(StateManagement.bloc));
+      expect(config.dataClassFormat, equals(DataClassFormat.freezed));
+      expect(config.runCodeFormatter, isTrue);
+      expect(config.runCodeGenerator, isTrue);
+    });
+
     test('takes run code formatter from cli instead of yaml', () {
       final config = mergeConfigs(
         cli: CliFeatureGenConfig(
@@ -289,6 +369,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: false,
           runCodeGenerator: null,
         ),
@@ -296,6 +377,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: true,
           runCodeGenerator: null,
         ),
@@ -317,6 +399,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: false,
         ),
@@ -324,6 +407,7 @@ void main() {
           featurePrefix: null,
           outputDir: null,
           stateManagement: null,
+          dataClassFormat: null,
           runCodeFormatter: null,
           runCodeGenerator: true,
         ),

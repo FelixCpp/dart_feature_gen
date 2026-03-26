@@ -32,6 +32,7 @@ void main() {
         featurePrefix: null,
         outputDirectory: '',
         stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.freezed,
         runCodeFormatter: true,
         runCodeGenerator: true,
       );

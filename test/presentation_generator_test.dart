@@ -1,7 +1,6 @@
 import 'package:dart_feature_gen/src/feature_gen_config.dart';
 import 'package:dart_feature_gen/src/generators/presentation_generator.dart';
 import 'package:dart_feature_gen/src/io/feature_gen_io.dart';
-import 'package:file/file.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -9,64 +8,37 @@ import 'package:test/test.dart';
 import 'memory_file_system.dart';
 
 void main() {
-  group(PresentationGenerator, () {
-    late FileSystem fileSystem;
+  group('Bloc generation', () {
+    late FeatureGenIO io;
     late PresentationGenerator generator;
 
     setUp(() {
-      fileSystem = getTestFileSystem();
-
       final logger = Logger(level: Level.quiet);
-      final io = FeatureGenIO(fileSystem: fileSystem, logger: logger);
+      io = FeatureGenIO(fileSystem: getTestFileSystem(), logger: logger);
       generator = PresentationGenerator(logger: logger, io: io);
     });
 
-    test(
-      'should generate directories and files with contents using bloc',
-      () async {
-        final config = FeatureGenConfig(
-          featureName: 'auth',
-          featurePrefix: null,
-          outputDirectory: '',
-          stateManagement: StateManagement.bloc,
-          runCodeFormatter: true,
-          runCodeGenerator: true,
-        );
+    test('Should generate bloc state using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
 
-        await generator.generate(config);
-
-        expect(
-          fileSystem
-              .file(path.join(
+      expect(
+          io
+              .getFile(path.join(
                 'auth',
                 'presentation',
                 'bloc',
-                'auth_event.dart',
+                'auth_state.dart',
               ))
               .readAsString(),
-          completion(
-            equals('''
-part of 'auth_bloc.dart';
-
-@freezed
-sealed class AuthEvent with _\$AuthEvent {
-  const factory AuthEvent.onSetup() = _OnSetup;
-}
-'''),
-          ),
-        );
-
-        expect(
-            fileSystem
-                .file(path.join(
-                  'auth',
-                  'presentation',
-                  'bloc',
-                  'auth_state.dart',
-                ))
-                .readAsString(),
-            completion(
-              equals('''
+          completion(equals('''
 part of 'auth_bloc.dart';
 
 @freezed
@@ -77,15 +49,122 @@ sealed class AuthState with _\$AuthState {
     return const AuthState();
   }
 }
-'''),
-            ));
+''')));
+    });
 
-        expect(
-          fileSystem
-              .file(path.join('auth', 'presentation', 'bloc', 'auth_bloc.dart'))
+    test('Should generate bloc event using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'bloc',
+                'auth_event.dart',
+              ))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
+part of 'auth_bloc.dart';
+
+@freezed
+sealed class AuthEvent with _\$AuthEvent {
+  const factory AuthEvent.onSetup() = _OnSetup;
+}
+''')));
+    });
+
+    test('Should generate bloc event using sealed_unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'bloc',
+                'auth_event.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
+part of 'auth_bloc.dart';
+
+sealed class AuthEvent {
+  const factory AuthEvent.onSetup() = _OnSetup;
+}
+
+class _OnSetup implements AuthEvent {
+  const _OnSetup();
+}
+''')));
+    });
+
+    test('Should generate bloc state using sealed_unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'bloc',
+                'auth_state.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
+part of 'auth_bloc.dart';
+
+sealed class AuthState {
+  const factory AuthState.initial() = _Initial;
+}
+
+class _Initial implements AuthState {
+  const _Initial();
+}
+''')));
+    });
+
+    test('should generate bloc using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(
+                  path.join('auth', 'presentation', 'bloc', 'auth_bloc.dart'))
+              .readAsString(),
+          completion(equals('''
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -104,16 +183,61 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // TODO: Implement setup logic
   }
 }
-'''),
-          ),
-        );
+''')));
+    });
 
-        expect(
-          fileSystem
-              .file(path.join('auth', 'presentation', 'auth_screen.dart'))
+    test('should generate bloc using sealed unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(
+                  path.join('auth', 'presentation', 'bloc', 'auth_bloc.dart'))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
+import 'dart:async';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'auth_event.dart';
+part 'auth_state.dart';
+
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc() : super(AuthState.initial()) {
+    on<_OnSetup>(_onSetup);
+  }
+
+  FutureOr<void> _onSetup(_OnSetup event, Emitter<AuthState> emit) {
+    // TODO: Implement setup logic
+  }
+}
+''')));
+    });
+
+    test('should generate bloc screen', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.bloc,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join('auth', 'presentation', 'auth_screen.dart'))
+              .readAsString(),
+          completion(equals('''
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -147,37 +271,41 @@ class _Scaffold extends StatelessWidget {
       return const Placeholder();
   }
 }
-'''),
-          ),
-        );
-      },
-    );
+''')));
+    });
+  });
 
-    test(
-      'should generate directories and files with contents using cubit',
-      () async {
-        final config = FeatureGenConfig(
-          featureName: 'auth',
-          featurePrefix: null,
-          outputDirectory: '',
-          stateManagement: StateManagement.cubit,
-          runCodeFormatter: true,
-          runCodeGenerator: true,
-        );
+  group('Cubit generation', () {
+    late FeatureGenIO io;
+    late PresentationGenerator generator;
 
-        await generator.generate(config);
+    setUp(() {
+      final logger = Logger(level: Level.quiet);
+      io = FeatureGenIO(fileSystem: getTestFileSystem(), logger: logger);
+      generator = PresentationGenerator(logger: logger, io: io);
+    });
 
-        expect(
-            fileSystem
-                .file(path.join(
-                  'auth',
-                  'presentation',
-                  'cubit',
-                  'auth_state.dart',
-                ))
-                .readAsString(),
-            completion(
-              equals('''
+    test('Should generate cubit state using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.cubit,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'cubit',
+                'auth_state.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
 part of 'auth_cubit.dart';
 
 @freezed
@@ -188,16 +316,65 @@ sealed class AuthState with _\$AuthState {
     return const AuthState();
   }
 }
-'''),
-            ));
+''')));
+    });
 
-        expect(
-          fileSystem
-              .file(
-                  path.join('auth', 'presentation', 'cubit', 'auth_cubit.dart'))
+    test('Should generate cubit state using sealed_unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.cubit,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'cubit',
+                'auth_state.dart',
+              ))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
+part of 'auth_cubit.dart';
+
+sealed class AuthState {
+  const AuthState();
+
+  factory AuthState.initial() = _AuthInitial;
+}
+
+class _AuthInitial implements AuthState {
+  const _AuthInitial();
+}
+''')));
+    });
+
+    test('Should generate cubit using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.cubit,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'cubit',
+                'auth_cubit.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -207,16 +384,56 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthState.initial());
 }
-'''),
-          ),
-        );
+''')));
+    });
 
-        expect(
-          fileSystem
-              .file(path.join('auth', 'presentation', 'auth_screen.dart'))
+    test('Should generate cubit using sealed unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.cubit,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'cubit',
+                'auth_cubit.dart',
+              ))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'auth_state.dart';
+
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit() : super(AuthState.initial());
+}
+''')));
+    });
+
+    test('Should generate cubit screen', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.cubit,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join('auth', 'presentation', 'auth_screen.dart'))
+              .readAsString(),
+          completion(equals('''
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -250,57 +467,41 @@ class _Scaffold extends StatelessWidget {
       return const Placeholder();
   }
 }
-'''),
-          ),
-        );
-      },
-    );
+''')));
+    });
+  });
 
-    test(
-      'should generate directories and files with contents using riverpod',
-      () async {
-        final config = FeatureGenConfig(
-          featureName: 'auth',
-          featurePrefix: null,
-          outputDirectory: '',
-          stateManagement: StateManagement.riverpod,
-          runCodeFormatter: true,
-          runCodeGenerator: true,
-        );
+  group('Riverpod generation', () {
+    late FeatureGenIO io;
+    late PresentationGenerator generator;
 
-        await generator.generate(config);
+    setUp(() {
+      final logger = Logger(level: Level.quiet);
+      io = FeatureGenIO(fileSystem: getTestFileSystem(), logger: logger);
+      generator = PresentationGenerator(logger: logger, io: io);
+    });
 
-        expect(
-            fileSystem
-                .file(path.join(
-                  'auth',
-                  'presentation',
-                  'riverpod',
-                  'auth_state.dart',
-                ))
-                .readAsString(),
-            completion(
-              equals('''
-part of 'auth_notifier.dart';
+    test('Should generate riverpod notifier using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.riverpod,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
 
-@freezed
-sealed class AuthState with _\$AuthState {
-  const factory AuthState() = _AuthState;
-
-  factory AuthState.initial() {
-    return const AuthState();
-  }
-}
-'''),
-            ));
-
-        expect(
-          fileSystem
-              .file(path.join(
-                  'auth', 'presentation', 'riverpod', 'auth_notifier.dart'))
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'riverpod',
+                'auth_notifier.dart',
+              ))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -315,16 +516,130 @@ class AuthNotifier extends _\$AuthNotifier {
     return AuthState.initial();
   }
 }
-'''),
-          ),
-        );
+''')));
+    });
 
-        expect(
-          fileSystem
-              .file(path.join('auth', 'presentation', 'auth_screen.dart'))
+    test('Should generate riverpod notifier using sealed unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.riverpod,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'riverpod',
+                'auth_notifier.dart',
+              ))
               .readAsString(),
-          completion(
-            equals('''
+          completion(equals('''
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'auth_notifier.g.dart';
+part 'auth_state.dart';
+
+@riverpod
+class AuthNotifier extends _\$AuthNotifier {
+  @override
+  AuthState build() {
+    return AuthState.initial();
+  }
+}
+''')));
+    });
+
+    test('Should generate riverpod state using sealed_unions', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.riverpod,
+        dataClassFormat: DataClassFormat.sealedUnion,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'riverpod',
+                'auth_state.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
+part of 'auth_notifier.dart';
+
+sealed class AuthState {
+  const AuthState();
+
+  factory AuthState.initial() = _AuthInitial;
+}
+
+class _AuthInitial implements AuthState {
+  const _AuthInitial();
+}
+''')));
+    });
+
+    test('Should generate riverpod state using freezed', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.riverpod,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join(
+                'auth',
+                'presentation',
+                'riverpod',
+                'auth_state.dart',
+              ))
+              .readAsString(),
+          completion(equals('''
+part of 'auth_notifier.dart';
+
+@freezed
+sealed class AuthState with _\$AuthState {
+  const factory AuthState() = _AuthState;
+
+  factory AuthState.initial() {
+    return const AuthState();
+  }
+}
+''')));
+    });
+
+    test('Should generate riverpod screen', () async {
+      await generator.generate(FeatureGenConfig(
+        featureName: 'auth',
+        featurePrefix: null,
+        outputDirectory: '',
+        stateManagement: StateManagement.riverpod,
+        dataClassFormat: DataClassFormat.freezed,
+        runCodeFormatter: true,
+        runCodeGenerator: true,
+      ));
+
+      expect(
+          io
+              .getFile(path.join('auth', 'presentation', 'auth_screen.dart'))
+              .readAsString(),
+          completion(equals('''
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -355,10 +670,7 @@ class _Scaffold extends StatelessWidget {
     return const Placeholder();
   }
 }
-'''),
-          ),
-        );
-      },
-    );
+''')));
+    });
   });
 }

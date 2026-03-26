@@ -17,6 +17,8 @@ FeatureGenConfig mergeConfigs({
     ),
     stateManagement:
         _parseStateManagement(cli.stateManagement ?? yaml.stateManagement),
+    dataClassFormat:
+        _parseDataClassFormat(cli.dataClassFormat ?? yaml.dataClassFormat),
     runCodeFormatter: cli.runCodeFormatter ?? yaml.runCodeFormatter ?? true,
     runCodeGenerator: cli.runCodeGenerator ?? yaml.runCodeGenerator ?? true,
   );
@@ -38,6 +40,17 @@ StateManagement _parseStateManagement(String? value) {
   if (value == 'bloc') return StateManagement.bloc;
   if (value == 'cubit') return StateManagement.cubit;
   if (value == 'riverpod') return StateManagement.riverpod;
+
+  throw ArgumentError.value(value);
+}
+
+DataClassFormat _parseDataClassFormat(String? value) {
+  if (value == null) {
+    return DataClassFormat.freezed;
+  }
+
+  if (value == 'freezed') return DataClassFormat.freezed;
+  if (value == 'sealed_unions') return DataClassFormat.sealedUnion;
 
   throw ArgumentError.value(value);
 }

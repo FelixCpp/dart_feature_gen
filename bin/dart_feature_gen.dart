@@ -93,6 +93,7 @@ Future<YamlFeatureGenConfig> _loadYamlConfig(
     featurePrefix: null,
     outputDir: null,
     stateManagement: null,
+    dataClassFormat: null,
     runCodeFormatter: null,
     runCodeGenerator: null,
   );

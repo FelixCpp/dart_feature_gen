@@ -16,26 +16,42 @@ class PresentationGenerator {
 
     switch (config.stateManagement) {
       case StateManagement.bloc:
-        await _generateBlocFiles(uiDirectory, config.featureName);
+        await _generateBlocFiles(
+          uiDirectory,
+          config.featureName,
+          config.dataClassFormat,
+        );
       case StateManagement.cubit:
-        await _generateCubitFiles(uiDirectory, config.featureName);
+        await _generateCubitFiles(
+          uiDirectory,
+          config.featureName,
+          config.dataClassFormat,
+        );
       case StateManagement.riverpod:
-        await _generateRiverpodFiles(uiDirectory, config.featureName);
+        await _generateRiverpodFiles(
+          uiDirectory,
+          config.featureName,
+          config.dataClassFormat,
+        );
     }
   }
 
-  Future<void> _generateBlocFiles(String directory, String featureName) async {
+  Future<void> _generateBlocFiles(
+    String directory,
+    String featureName,
+    DataClassFormat dataClassFormat,
+  ) async {
     await io.createFile(
       join(directory, 'bloc', '${featureName}_bloc.dart'),
-      _BlocTemplates.bloc(featureName),
+      _BlocTemplates.bloc(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, 'bloc', '${featureName}_state.dart'),
-      _BlocTemplates.state(featureName),
+      _BlocTemplates.state(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, 'bloc', '${featureName}_event.dart'),
-      _BlocTemplates.event(featureName),
+      _BlocTemplates.event(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, '${featureName}_screen.dart'),
@@ -46,14 +62,15 @@ class PresentationGenerator {
   Future<void> _generateCubitFiles(
     String directory,
     String featureName,
+    DataClassFormat dataClassFormat,
   ) async {
     await io.createFile(
       join(directory, 'cubit', '${featureName}_cubit.dart'),
-      _CubitTemplates.cubit(featureName),
+      _CubitTemplates.cubit(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, 'cubit', '${featureName}_state.dart'),
-      _CubitTemplates.state(featureName),
+      _CubitTemplates.state(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, '${featureName}_screen.dart'),
@@ -64,14 +81,15 @@ class PresentationGenerator {
   Future<void> _generateRiverpodFiles(
     String directory,
     String featureName,
+    DataClassFormat dataClassFormat,
   ) async {
     await io.createFile(
       join(directory, 'riverpod', '${featureName}_notifier.dart'),
-      _RiverpodTemplates.notifier(featureName),
+      _RiverpodTemplates.notifier(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, 'riverpod', '${featureName}_state.dart'),
-      _RiverpodTemplates.state(featureName),
+      _RiverpodTemplates.state(featureName, dataClassFormat),
     );
     await io.createFile(
       join(directory, '${featureName}_screen.dart'),
@@ -81,7 +99,7 @@ class PresentationGenerator {
 }
 
 abstract final class _BlocTemplates {
-  static String state(String featureName) {
+  static String _stateFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -98,7 +116,30 @@ sealed class ${className}State with _\$${className}State {
 ''';
   }
 
-  static String event(String featureName) {
+  static String _stateSealedUnion(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+part of '${featureName}_bloc.dart';
+
+sealed class ${className}State {
+  const factory ${className}State.initial() = _Initial;
+}
+
+class _Initial implements ${className}State {
+  const _Initial();
+}
+''';
+  }
+
+  static String state(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => _stateFreezed(featureName),
+      DataClassFormat.sealedUnion => _stateSealedUnion(featureName),
+    };
+  }
+
+  static String _eventFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -111,7 +152,30 @@ sealed class ${className}Event with _\$${className}Event {
 ''';
   }
 
-  static String bloc(String featureName) {
+  static String _eventSealedUnion(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+part of '${featureName}_bloc.dart';
+
+sealed class ${className}Event {
+  const factory ${className}Event.onSetup() = _OnSetup;
+}
+
+class _OnSetup implements ${className}Event {
+  const _OnSetup();
+}
+''';
+  }
+
+  static String event(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => _eventFreezed(featureName),
+      DataClassFormat.sealedUnion => _eventSealedUnion(featureName),
+    };
+  }
+
+  static String blocFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -134,6 +198,36 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
   }
 }
 ''';
+  }
+
+  static String blocSealedUnions(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+import 'dart:async';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+part '${featureName}_event.dart';
+part '${featureName}_state.dart';
+
+class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
+  ${className}Bloc() : super(${className}State.initial()) {
+    on<_OnSetup>(_onSetup);
+  }
+
+  FutureOr<void> _onSetup(_OnSetup event, Emitter<${className}State> emit) {
+    // TODO: Implement setup logic
+  }
+}
+''';
+  }
+
+  static String bloc(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => blocFreezed(featureName),
+      DataClassFormat.sealedUnion => blocSealedUnions(featureName),
+    };
   }
 
   static String screen(String featureName) {
@@ -178,7 +272,7 @@ class _Scaffold extends StatelessWidget {
 }
 
 abstract final class _CubitTemplates {
-  static String state(String featureName) {
+  static String _stateFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -195,7 +289,32 @@ sealed class ${className}State with _\$${className}State {
 ''';
   }
 
-  static String cubit(String featureName) {
+  static String _stateSealedUnion(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+part of '${featureName}_cubit.dart';
+
+sealed class ${className}State {
+  const ${className}State();
+
+  factory ${className}State.initial() = _${className}Initial;
+}
+
+class _${className}Initial implements ${className}State {
+  const _${className}Initial();
+}
+''';
+  }
+
+  static String state(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => _stateFreezed(featureName),
+      DataClassFormat.sealedUnion => _stateSealedUnion(featureName),
+    };
+  }
+
+  static String cubitFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -209,6 +328,27 @@ class ${className}Cubit extends Cubit<${className}State> {
   ${className}Cubit() : super(${className}State.initial());
 }
 ''';
+  }
+
+  static String cubitSealedUnion(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+part '${featureName}_state.dart';
+
+class ${className}Cubit extends Cubit<${className}State> {
+  ${className}Cubit() : super(${className}State.initial());
+}
+''';
+  }
+
+  static String cubit(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => cubitFreezed(featureName),
+      DataClassFormat.sealedUnion => cubitSealedUnion(featureName),
+    };
   }
 
   static String screen(String featureName) {
@@ -253,7 +393,7 @@ class _Scaffold extends StatelessWidget {
 }
 
 abstract final class _RiverpodTemplates {
-  static String state(String featureName) {
+  static String _stateFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -270,7 +410,31 @@ sealed class ${className}State with _\$${className}State {
 ''';
   }
 
-  static String notifier(String featureName) {
+  static String _stateSealedUnion(String featureName) {
+    final className = featureName.pascalCase;
+    return '''
+part of '${featureName}_notifier.dart';
+
+sealed class ${className}State {
+  const ${className}State();
+
+  factory ${className}State.initial() = _${className}Initial;
+}
+
+class _${className}Initial implements ${className}State {
+  const _${className}Initial();
+}
+''';
+  }
+
+  static String state(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => _stateFreezed(featureName),
+      DataClassFormat.sealedUnion => _stateSealedUnion(featureName),
+    };
+  }
+
+  static String notifierFreezed(String featureName) {
     final className = featureName.pascalCase;
 
     return '''
@@ -289,6 +453,32 @@ class ${className}Notifier extends _\$${className}Notifier {
   }
 }
 ''';
+  }
+
+  static String notifierSealedUnions(String featureName) {
+    final className = featureName.pascalCase;
+
+    return '''
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '${featureName}_notifier.g.dart';
+part '${featureName}_state.dart';
+
+@riverpod
+class ${className}Notifier extends _\$${className}Notifier {
+  @override
+  ${className}State build() {
+    return ${className}State.initial();
+  }
+}
+''';
+  }
+
+  static String notifier(String featureName, DataClassFormat format) {
+    return switch (format) {
+      DataClassFormat.freezed => notifierFreezed(featureName),
+      DataClassFormat.sealedUnion => notifierSealedUnions(featureName),
+    };
   }
 
   static String screen(String featureName) {

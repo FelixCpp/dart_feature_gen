@@ -24,6 +24,7 @@ class YamlConfigLoader {
       featurePrefix: yaml['feature-prefix'] as String?,
       outputDir: yaml['output-dir'] as String?,
       stateManagement: yaml['state-management'] as String?,
+      dataClassFormat: yaml['data-class-format'] as String?,
       runCodeFormatter: yaml['code-format'] as bool?,
       runCodeGenerator: yaml['code-generate'] as bool?,
     );

@@ -8,6 +8,7 @@ sealed class YamlFeatureGenConfig with _$YamlFeatureGenConfig {
     required String? featurePrefix,
     required String? outputDir,
     required String? stateManagement,
+    required String? dataClassFormat,
     required bool? runCodeFormatter,
     required bool? runCodeGenerator,
   }) = _YamlFeatureGenConfig;

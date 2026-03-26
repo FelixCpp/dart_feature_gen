@@ -18,6 +18,7 @@ mixin _$CliFeatureGenConfig {
   String? get featurePrefix;
   String? get outputDir;
   String? get stateManagement;
+  String? get dataClassFormat;
   bool? get runCodeFormatter;
   bool? get runCodeGenerator;
 
@@ -42,6 +43,8 @@ mixin _$CliFeatureGenConfig {
                 other.outputDir == outputDir) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -49,12 +52,19 @@ mixin _$CliFeatureGenConfig {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDir, stateManagement, runCodeFormatter, runCodeGenerator);
+  int get hashCode => Object.hash(
+      runtimeType,
+      featureName,
+      featurePrefix,
+      outputDir,
+      stateManagement,
+      dataClassFormat,
+      runCodeFormatter,
+      runCodeGenerator);
 
   @override
   String toString() {
-    return 'CliFeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'CliFeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -69,6 +79,7 @@ abstract mixin class $CliFeatureGenConfigCopyWith<$Res> {
       String? featurePrefix,
       String? outputDir,
       String? stateManagement,
+      String? dataClassFormat,
       bool? runCodeFormatter,
       bool? runCodeGenerator});
 }
@@ -90,6 +101,7 @@ class _$CliFeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDir = freezed,
     Object? stateManagement = freezed,
+    Object? dataClassFormat = freezed,
     Object? runCodeFormatter = freezed,
     Object? runCodeGenerator = freezed,
   }) {
@@ -109,6 +121,10 @@ class _$CliFeatureGenConfigCopyWithImpl<$Res>
       stateManagement: freezed == stateManagement
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataClassFormat: freezed == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
               as String?,
       runCodeFormatter: freezed == runCodeFormatter
           ? _self.runCodeFormatter
@@ -218,6 +234,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)?
         $default, {
@@ -231,6 +248,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -258,6 +276,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)
         $default,
@@ -270,6 +289,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
     }
@@ -294,6 +314,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)?
         $default,
@@ -306,6 +327,7 @@ extension CliFeatureGenConfigPatterns on CliFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -322,6 +344,7 @@ class _CliFeatureGenConfig implements CliFeatureGenConfig {
       required this.featurePrefix,
       required this.outputDir,
       required this.stateManagement,
+      required this.dataClassFormat,
       required this.runCodeFormatter,
       required this.runCodeGenerator});
 
@@ -333,6 +356,8 @@ class _CliFeatureGenConfig implements CliFeatureGenConfig {
   final String? outputDir;
   @override
   final String? stateManagement;
+  @override
+  final String? dataClassFormat;
   @override
   final bool? runCodeFormatter;
   @override
@@ -360,6 +385,8 @@ class _CliFeatureGenConfig implements CliFeatureGenConfig {
                 other.outputDir == outputDir) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -367,12 +394,19 @@ class _CliFeatureGenConfig implements CliFeatureGenConfig {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDir, stateManagement, runCodeFormatter, runCodeGenerator);
+  int get hashCode => Object.hash(
+      runtimeType,
+      featureName,
+      featurePrefix,
+      outputDir,
+      stateManagement,
+      dataClassFormat,
+      runCodeFormatter,
+      runCodeGenerator);
 
   @override
   String toString() {
-    return 'CliFeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'CliFeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -389,6 +423,7 @@ abstract mixin class _$CliFeatureGenConfigCopyWith<$Res>
       String? featurePrefix,
       String? outputDir,
       String? stateManagement,
+      String? dataClassFormat,
       bool? runCodeFormatter,
       bool? runCodeGenerator});
 }
@@ -410,6 +445,7 @@ class __$CliFeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDir = freezed,
     Object? stateManagement = freezed,
+    Object? dataClassFormat = freezed,
     Object? runCodeFormatter = freezed,
     Object? runCodeGenerator = freezed,
   }) {
@@ -429,6 +465,10 @@ class __$CliFeatureGenConfigCopyWithImpl<$Res>
       stateManagement: freezed == stateManagement
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataClassFormat: freezed == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
               as String?,
       runCodeFormatter: freezed == runCodeFormatter
           ? _self.runCodeFormatter

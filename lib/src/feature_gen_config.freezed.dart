@@ -18,6 +18,7 @@ mixin _$FeatureGenConfig {
   String? get featurePrefix;
   String get outputDirectory;
   StateManagement get stateManagement;
+  DataClassFormat get dataClassFormat;
   bool get runCodeFormatter;
   bool get runCodeGenerator;
 
@@ -42,6 +43,8 @@ mixin _$FeatureGenConfig {
                 other.outputDirectory == outputDirectory) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -49,12 +52,19 @@ mixin _$FeatureGenConfig {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDirectory, stateManagement, runCodeFormatter, runCodeGenerator);
+  int get hashCode => Object.hash(
+      runtimeType,
+      featureName,
+      featurePrefix,
+      outputDirectory,
+      stateManagement,
+      dataClassFormat,
+      runCodeFormatter,
+      runCodeGenerator);
 
   @override
   String toString() {
-    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -69,6 +79,7 @@ abstract mixin class $FeatureGenConfigCopyWith<$Res> {
       String? featurePrefix,
       String outputDirectory,
       StateManagement stateManagement,
+      DataClassFormat dataClassFormat,
       bool runCodeFormatter,
       bool runCodeGenerator});
 }
@@ -90,6 +101,7 @@ class _$FeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDirectory = null,
     Object? stateManagement = null,
+    Object? dataClassFormat = null,
     Object? runCodeFormatter = null,
     Object? runCodeGenerator = null,
   }) {
@@ -110,6 +122,10 @@ class _$FeatureGenConfigCopyWithImpl<$Res>
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
               as StateManagement,
+      dataClassFormat: null == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
+              as DataClassFormat,
       runCodeFormatter: null == runCodeFormatter
           ? _self.runCodeFormatter
           : runCodeFormatter // ignore: cast_nullable_to_non_nullable
@@ -218,6 +234,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             String? featurePrefix,
             String outputDirectory,
             StateManagement stateManagement,
+            DataClassFormat dataClassFormat,
             bool runCodeFormatter,
             bool runCodeGenerator)?
         $default, {
@@ -231,6 +248,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             _that.featurePrefix,
             _that.outputDirectory,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -258,6 +276,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             String? featurePrefix,
             String outputDirectory,
             StateManagement stateManagement,
+            DataClassFormat dataClassFormat,
             bool runCodeFormatter,
             bool runCodeGenerator)
         $default,
@@ -270,6 +289,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             _that.featurePrefix,
             _that.outputDirectory,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
     }
@@ -294,6 +314,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             String? featurePrefix,
             String outputDirectory,
             StateManagement stateManagement,
+            DataClassFormat dataClassFormat,
             bool runCodeFormatter,
             bool runCodeGenerator)?
         $default,
@@ -306,6 +327,7 @@ extension FeatureGenConfigPatterns on FeatureGenConfig {
             _that.featurePrefix,
             _that.outputDirectory,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -322,6 +344,7 @@ class _FeatureGenConfig implements FeatureGenConfig {
       required this.featurePrefix,
       required this.outputDirectory,
       required this.stateManagement,
+      required this.dataClassFormat,
       required this.runCodeFormatter,
       required this.runCodeGenerator});
 
@@ -333,6 +356,8 @@ class _FeatureGenConfig implements FeatureGenConfig {
   final String outputDirectory;
   @override
   final StateManagement stateManagement;
+  @override
+  final DataClassFormat dataClassFormat;
   @override
   final bool runCodeFormatter;
   @override
@@ -359,6 +384,8 @@ class _FeatureGenConfig implements FeatureGenConfig {
                 other.outputDirectory == outputDirectory) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -366,12 +393,19 @@ class _FeatureGenConfig implements FeatureGenConfig {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, featureName, featurePrefix,
-      outputDirectory, stateManagement, runCodeFormatter, runCodeGenerator);
+  int get hashCode => Object.hash(
+      runtimeType,
+      featureName,
+      featurePrefix,
+      outputDirectory,
+      stateManagement,
+      dataClassFormat,
+      runCodeFormatter,
+      runCodeGenerator);
 
   @override
   String toString() {
-    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'FeatureGenConfig(featureName: $featureName, featurePrefix: $featurePrefix, outputDirectory: $outputDirectory, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -388,6 +422,7 @@ abstract mixin class _$FeatureGenConfigCopyWith<$Res>
       String? featurePrefix,
       String outputDirectory,
       StateManagement stateManagement,
+      DataClassFormat dataClassFormat,
       bool runCodeFormatter,
       bool runCodeGenerator});
 }
@@ -409,6 +444,7 @@ class __$FeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDirectory = null,
     Object? stateManagement = null,
+    Object? dataClassFormat = null,
     Object? runCodeFormatter = null,
     Object? runCodeGenerator = null,
   }) {
@@ -429,6 +465,10 @@ class __$FeatureGenConfigCopyWithImpl<$Res>
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
               as StateManagement,
+      dataClassFormat: null == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
+              as DataClassFormat,
       runCodeFormatter: null == runCodeFormatter
           ? _self.runCodeFormatter
           : runCodeFormatter // ignore: cast_nullable_to_non_nullable

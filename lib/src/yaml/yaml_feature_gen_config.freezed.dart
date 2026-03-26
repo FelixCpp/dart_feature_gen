@@ -17,6 +17,7 @@ mixin _$YamlFeatureGenConfig {
   String? get featurePrefix;
   String? get outputDir;
   String? get stateManagement;
+  String? get dataClassFormat;
   bool? get runCodeFormatter;
   bool? get runCodeGenerator;
 
@@ -39,6 +40,8 @@ mixin _$YamlFeatureGenConfig {
                 other.outputDir == outputDir) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -47,11 +50,11 @@ mixin _$YamlFeatureGenConfig {
 
   @override
   int get hashCode => Object.hash(runtimeType, featurePrefix, outputDir,
-      stateManagement, runCodeFormatter, runCodeGenerator);
+      stateManagement, dataClassFormat, runCodeFormatter, runCodeGenerator);
 
   @override
   String toString() {
-    return 'YamlFeatureGenConfig(featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'YamlFeatureGenConfig(featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -65,6 +68,7 @@ abstract mixin class $YamlFeatureGenConfigCopyWith<$Res> {
       {String? featurePrefix,
       String? outputDir,
       String? stateManagement,
+      String? dataClassFormat,
       bool? runCodeFormatter,
       bool? runCodeGenerator});
 }
@@ -85,6 +89,7 @@ class _$YamlFeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDir = freezed,
     Object? stateManagement = freezed,
+    Object? dataClassFormat = freezed,
     Object? runCodeFormatter = freezed,
     Object? runCodeGenerator = freezed,
   }) {
@@ -100,6 +105,10 @@ class _$YamlFeatureGenConfigCopyWithImpl<$Res>
       stateManagement: freezed == stateManagement
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataClassFormat: freezed == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
               as String?,
       runCodeFormatter: freezed == runCodeFormatter
           ? _self.runCodeFormatter
@@ -208,6 +217,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)?
         $default, {
@@ -220,6 +230,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -246,6 +257,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)
         $default,
@@ -257,6 +269,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
     }
@@ -280,6 +293,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             String? featurePrefix,
             String? outputDir,
             String? stateManagement,
+            String? dataClassFormat,
             bool? runCodeFormatter,
             bool? runCodeGenerator)?
         $default,
@@ -291,6 +305,7 @@ extension YamlFeatureGenConfigPatterns on YamlFeatureGenConfig {
             _that.featurePrefix,
             _that.outputDir,
             _that.stateManagement,
+            _that.dataClassFormat,
             _that.runCodeFormatter,
             _that.runCodeGenerator);
       case _:
@@ -306,6 +321,7 @@ class _YamlFeatureGenConfig implements YamlFeatureGenConfig {
       {required this.featurePrefix,
       required this.outputDir,
       required this.stateManagement,
+      required this.dataClassFormat,
       required this.runCodeFormatter,
       required this.runCodeGenerator});
 
@@ -315,6 +331,8 @@ class _YamlFeatureGenConfig implements YamlFeatureGenConfig {
   final String? outputDir;
   @override
   final String? stateManagement;
+  @override
+  final String? dataClassFormat;
   @override
   final bool? runCodeFormatter;
   @override
@@ -340,6 +358,8 @@ class _YamlFeatureGenConfig implements YamlFeatureGenConfig {
                 other.outputDir == outputDir) &&
             (identical(other.stateManagement, stateManagement) ||
                 other.stateManagement == stateManagement) &&
+            (identical(other.dataClassFormat, dataClassFormat) ||
+                other.dataClassFormat == dataClassFormat) &&
             (identical(other.runCodeFormatter, runCodeFormatter) ||
                 other.runCodeFormatter == runCodeFormatter) &&
             (identical(other.runCodeGenerator, runCodeGenerator) ||
@@ -348,11 +368,11 @@ class _YamlFeatureGenConfig implements YamlFeatureGenConfig {
 
   @override
   int get hashCode => Object.hash(runtimeType, featurePrefix, outputDir,
-      stateManagement, runCodeFormatter, runCodeGenerator);
+      stateManagement, dataClassFormat, runCodeFormatter, runCodeGenerator);
 
   @override
   String toString() {
-    return 'YamlFeatureGenConfig(featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
+    return 'YamlFeatureGenConfig(featurePrefix: $featurePrefix, outputDir: $outputDir, stateManagement: $stateManagement, dataClassFormat: $dataClassFormat, runCodeFormatter: $runCodeFormatter, runCodeGenerator: $runCodeGenerator)';
   }
 }
 
@@ -368,6 +388,7 @@ abstract mixin class _$YamlFeatureGenConfigCopyWith<$Res>
       {String? featurePrefix,
       String? outputDir,
       String? stateManagement,
+      String? dataClassFormat,
       bool? runCodeFormatter,
       bool? runCodeGenerator});
 }
@@ -388,6 +409,7 @@ class __$YamlFeatureGenConfigCopyWithImpl<$Res>
     Object? featurePrefix = freezed,
     Object? outputDir = freezed,
     Object? stateManagement = freezed,
+    Object? dataClassFormat = freezed,
     Object? runCodeFormatter = freezed,
     Object? runCodeGenerator = freezed,
   }) {
@@ -403,6 +425,10 @@ class __$YamlFeatureGenConfigCopyWithImpl<$Res>
       stateManagement: freezed == stateManagement
           ? _self.stateManagement
           : stateManagement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataClassFormat: freezed == dataClassFormat
+          ? _self.dataClassFormat
+          : dataClassFormat // ignore: cast_nullable_to_non_nullable
               as String?,
       runCodeFormatter: freezed == runCodeFormatter
           ? _self.runCodeFormatter

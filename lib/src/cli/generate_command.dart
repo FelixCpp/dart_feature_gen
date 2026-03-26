@@ -33,6 +33,13 @@ class GenerateCommand extends Command<CliFeatureGenConfig> {
       allowed: {'bloc', 'cubit', 'riverpod'},
     );
 
+    argParser.addOption(
+      'data-class-format',
+      help: 'Which data class format to use for the presentation layer.',
+      valueHelp: 'freezed',
+      allowed: {'freezed', 'sealed_unions'},
+    );
+
     argParser.addFlag(
       'code-format',
       defaultsTo: true,
@@ -65,6 +72,7 @@ class GenerateCommand extends Command<CliFeatureGenConfig> {
     final featurePrefix = results.option('feature-prefix');
     final outputDir = results.option('output-dir');
     final stateManagement = results.option('state-management');
+    final dataClassFormat = results.option('data-class-format');
     final runCodeFormatter =
         results.wasParsed('code-format') ? results.flag('code-format') : null;
     final runCodeGenerator = results.wasParsed('code-generate')
@@ -76,6 +84,7 @@ class GenerateCommand extends Command<CliFeatureGenConfig> {
       featurePrefix: featurePrefix,
       outputDir: outputDir,
       stateManagement: stateManagement,
+      dataClassFormat: dataClassFormat,
       runCodeFormatter: runCodeFormatter,
       runCodeGenerator: runCodeGenerator,
     );

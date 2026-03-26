@@ -9,6 +9,11 @@ enum StateManagement {
   riverpod,
 }
 
+enum DataClassFormat {
+  freezed,
+  sealedUnion,
+}
+
 @freezed
 sealed class FeatureGenConfig with _$FeatureGenConfig {
   const factory FeatureGenConfig({
@@ -16,6 +21,7 @@ sealed class FeatureGenConfig with _$FeatureGenConfig {
     required String? featurePrefix,
     required String outputDirectory,
     required StateManagement stateManagement,
+    required DataClassFormat dataClassFormat,
     required bool runCodeFormatter,
     required bool runCodeGenerator,
   }) = _FeatureGenConfig;
